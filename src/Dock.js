@@ -14,10 +14,21 @@ class Dock {
       icon.classList.add(app.placeholderClass);
       icon.innerHTML = `<span class="app-label">${app.name}</span>`;
     } else {
+      const img = new Image();
+      img.onload = () => {
+        console.log(`Successfully loaded icon for ${app.name}`);
+      };
+      img.onerror = (error) => {
+        console.error(`Failed to load icon for ${app.name}:`, error);
+        console.log('Attempted icon path:', app.icon);
+      };
+      img.src = app.icon;
+      img.alt = app.name;
+      
       icon.innerHTML = `
-        <img src="${app.icon}" alt="${app.name}">
         <span class="app-label">${app.name}</span>
       `;
+      icon.insertBefore(img, icon.firstChild);
     }
 
     this.dockContainer.appendChild(icon);
@@ -34,7 +45,7 @@ class Dock {
     const dockRect = this.dockContainer.getBoundingClientRect();
     const mouseX = e.clientX - dockRect.left;
     const iconSize = 64;
-    const maxMagnification = 2;
+    const maxMagnification = 1.5;
     const range = 100;
 
     this.icons.forEach(icon => {

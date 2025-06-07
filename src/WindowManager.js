@@ -68,6 +68,17 @@ class WindowManager {
       this.closeWindow(win);
     });
 
+    minimizeButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const appIcon = document.querySelector(`.dock-item img[alt="${options.title}"]`);
+      if (appIcon) {
+        this._animateMinimize(win, appIcon);
+      } else {
+        // Fallback if icon isn't found
+        win.style.display = 'none';
+      }
+    });
+
     return win;
   }
 
@@ -133,6 +144,39 @@ class WindowManager {
       document.addEventListener('mousemove', onMouseMove);
       document.addEventListener('mouseup', onMouseUp);
     });
+  }
+
+  _animateMinimize(windowEl, targetIcon) {
+    const windowRect = windowEl.getBoundingClientRect();
+    const iconRect = targetIcon.getBoundingClientRect();
+
+    const animationEl = windowEl.cloneNode(true);
+    animationEl.style.position = 'fixed';
+    animationEl.style.left = `${windowRect.left}px`;
+    animationEl.style.top = `${windowRect.top}px`;
+    animationEl.style.width = `${windowRect.width}px`;
+    animationEl.style.height = `${windowRect.height}px`;
+    animationEl.style.margin = '0';
+    animationEl.style.zIndex = '20000';
+    animationEl.style.transition = 'transform 0.4s cubic-bezier(0.5, 0, 1, 0.5), opacity 0.4s ease-out';
+    document.body.appendChild(animationEl);
+
+    windowEl.style.display = 'none';
+
+    requestAnimationFrame(() => {
+      const scaleX = iconRect.width / windowRect.width;
+      const scaleY = iconRect.height / windowRect.height;
+      
+      const translateX = iconRect.left - windowRect.left;
+      const translateY = iconRect.top - windowRect.top;
+
+      animationEl.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scaleX}, ${scaleY})`;
+      animationEl.style.opacity = '0';
+    });
+
+    setTimeout(() => {
+      animationEl.remove();
+    }, 400);
   }
 }
 

@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Basic Setup */
 body, html {
   margin: 0;
@@ -30,6 +34,10 @@ body, html {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
   z-index: 10000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
 }
 
 /* Dock */
@@ -173,11 +181,17 @@ body, html {
     position: relative;
     margin: 0 5px;
     transition: transform 0.2s, margin-bottom 0.2s;
+    width: 64px;
+    height: 64px;
+    background: transparent;
 }
 
 .dock-item img {
-    width: 100%;
-    height: 100%;
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    display: block;
+    z-index: 1;
 }
 
 .dock-item .app-label {
@@ -190,6 +204,7 @@ body, html {
     border-radius: 5px;
     font-size: 12px;
     white-space: nowrap;
+    z-index: 2;
 }
 
 .dock-item:hover .app-label {
@@ -322,4 +337,68 @@ body, html {
 .paintbrush-app .canvas {
   flex-grow: 1;
   cursor: crosshair;
+}
+
+/* Menu Bar Styles */
+.menu-bar-left, .menu-bar-right {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.apple-logo {
+  font-size: 16px;
+  margin-right: 15px;
+}
+
+.app-name {
+  font-weight: bold;
+}
+
+.menu-item {
+  padding: 0 10px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown {
+  position: relative;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 100;
+  border-radius: 4px;
+  padding: 5px 0;
+  backdrop-filter: blur(10px);
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 8px 15px;
+  text-decoration: none;
+  display: block;
+  font-size: 13px;
+}
+
+.dropdown-content a:hover {
+  background-color: #3478f6;
+  color: white;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content .separator {
+  height: 1px;
+  background-color: #ccc;
+  margin: 5px 0;
 }

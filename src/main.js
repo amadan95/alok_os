@@ -7,42 +7,67 @@ import PaintBrush from './apps/PaintBrush';
 import iPhoto from './apps/iPhoto';
 import iTunes from './apps/iTunes';
 import Safari from './apps/Safari';
+import QuickTime from './apps/QuickTime';
+import iPod from './apps/iPod';
 
 Dock.addApplication({
   name: 'TextEdit',
-  icon: '/icons/textedit.png',
+  icon: '/icons/TextEdit.png',
   action: () => TextEdit.launch()
 });
 
 Dock.addApplication({
   name: 'Calculator',
-  icon: '', // Assuming no icon provided for calc
-  placeholderClass: 'calculator-placeholder',
+  icon: '/icons/Calculette.png',
   action: () => Calculator.launch()
 });
 
 Dock.addApplication({
   name: 'PaintBrush',
-  icon: '/icons/paintbrush.png',
+  icon: '/icons/Microsoft Paint PNG.png',
   action: () => PaintBrush.launch()
 });
 
 Dock.addApplication({
   name: 'iPhoto',
-  icon: '/icons/iphoto.png',
+  icon: '/icons/iPhoto.png',
   action: () => iPhoto.launch()
 });
 
 Dock.addApplication({
   name: 'iTunes',
-  icon: '/icons/itunes.png',
+  icon: '/icons/iTunes.png',
   action: () => iTunes.launch()
 });
 
 Dock.addApplication({
   name: 'Safari',
-  icon: '/icons/safari.png',
+  icon: '/icons/Safari.png',
   action: () => Safari.launch()
 });
+
+Dock.addApplication({
+  name: 'QuickTime Player',
+  icon: '/icons/QuickTime.png',
+  action: () => QuickTime.launch()
+});
+
+Dock.addApplication({
+  name: 'iPod',
+  icon: '/icons/ipod.png',
+  action: () => iPod.launch()
+});
+
+function updateDateTime() {
+  const dateTimeElement = document.getElementById('date-time');
+  if (dateTimeElement) {
+    const now = new Date();
+    const options = { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    dateTimeElement.textContent = now.toLocaleDateString('en-US', options).replace(',', '');
+  }
+}
+
+updateDateTime();
+setInterval(updateDateTime, 1000);
 
 // Future JavaScript for LeopardWeb will go here.

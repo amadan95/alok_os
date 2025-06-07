@@ -5,10 +5,23 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "start": "concurrently \"npm run dev\" \"npm run proxy\"",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "proxy": "node proxy-server.cjs",
+    "proxy:stop": "pkill -f 'node proxy-server.cjs'"
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.4",
+    "tailwindcss": "^4.1.8",
     "vite": "^6.3.5"
+  },
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.1.8",
+    "concurrently": "^9.1.2",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "http-proxy-middleware": "^3.0.5"
   }
 }
