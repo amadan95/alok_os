@@ -1,0 +1,119 @@
+.itunes-app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #e6e6e6;
+  color: #333;
+}
+
+.itunes-header {
+  height: 60px;
+  background: linear-gradient(to bottom, #d5d5d5, #b4b4b4);
+  border-bottom: 1px solid #999;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.itunes-body {
+  display: flex;
+  flex-grow: 1;
+}
+
+.itunes-sidebar {
+  width: 180px;
+  background-color: #c8c8c8;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.itunes-sidebar .source-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 13px;
+}
+
+.itunes-sidebar .source-list .header {
+  font-weight: bold;
+  color: #666;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+
+.itunes-sidebar .source-list li {
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.itunes-sidebar .source-list li.selected {
+  background-color: #3e77c2;
+  color: white;
+}
+
+.itunes-main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.song-list {
+  flex-grow: 1;
+  overflow-y: auto;
+  background-color: white;
+}
+
+.song-list table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.song-list th, .song-list td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.song-list th {
+  background-color: #f7f7f7;
+  font-weight: normal;
+  color: #666;
+}
+
+.song-list tr:hover {
+  background-color: #f0f8ff;
+}
+
+.artwork-info {
+  height: 120px;
+  background-color: #f0f0f0;
+  border-top: 1px solid #ccc;
+}
+
+.playback-controls button {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #333;
+}
+
+.progress-bar-container {
+  flex-grow: 1;
+  height: 8px;
+  background-color: #999;
+  border-radius: 4px;
+  margin: 0 20px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0;
+  background-color: #3e77c2;
+}
+
+.volume-container {
+  width: 100px;
+} 

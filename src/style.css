@@ -1,0 +1,325 @@
+/* Basic Setup */
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
+  cursor: default;
+  user-select: none;
+}
+
+#desktop {
+  width: 100%;
+  height: 100%;
+  background: url('/aurora.jpg') no-repeat center center fixed;
+  background-size: cover;
+  position: relative;
+}
+
+/* Menu Bar */
+#menu-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+  z-index: 10000;
+}
+
+/* Dock */
+#dock-container {
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 9999;
+}
+
+#dock {
+    display: flex;
+    align-items: flex-end;
+    padding: 5px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    transform-origin: bottom center;
+}
+
+/* Window Styles */
+.window {
+  position: absolute;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  min-width: 200px;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  background-color: #f6f6f6; /* Fallback */
+  transition: box-shadow 0.2s ease-in-out;
+  border: 1px solid rgba(0,0,0,0.3);
+}
+
+.window.active {
+    box-shadow: 0 15px 45px rgba(0,0,0,0.5);
+}
+
+.window:not(.active) .window-header {
+    background: linear-gradient(to bottom, #f2f2f2, #d8d8d8);
+}
+
+.window:not(.active) .window-title {
+    opacity: 0.6;
+}
+
+.window-header {
+  height: 22px;
+  padding: 0 8px;
+  background: linear-gradient(to bottom, #e4e4e4, #c8c8c8);
+  border-top-left-radius: 7px;
+  border-top-right-radius: 7px;
+  border-bottom: 1px solid #7a7a7a;
+  cursor: move;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center title */
+  position: relative;
+  color: #333;
+}
+
+.window-controls {
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 6px;
+}
+
+.window-control {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid;
+    position: relative;
+}
+
+.window-control.close { background-color: #ff5f57; border-color: #e24b42; }
+.window-control.minimize { background-color: #ffbd2e; border-color: #e2a12d; }
+.window-control.maximize { background-color: #28c940; border-color: #24b038; }
+
+.window-control .symbol {
+    opacity: 0;
+    transition: opacity 0.1s;
+    color: rgba(0,0,0,0.6);
+    font-weight: bold;
+    font-size: 10px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    line-height: 1;
+}
+
+.window:hover .window-control .symbol {
+    opacity: 1;
+}
+
+.window-title {
+  font-size: 13px;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+  padding: 0 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.window-body {
+  flex-grow: 1;
+  border-bottom-left-radius: 7px;
+  border-bottom-right-radius: 7px;
+  overflow: hidden;
+  position: relative;
+}
+
+.resize-handle {
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    z-index: 10;
+}
+
+.resize-handle.bottom-right {
+    bottom: 0;
+    right: 0;
+    cursor: nwse-resize;
+    background-image: repeating-linear-gradient(135deg, rgba(0,0,0,0.2), rgba(0,0,0,0.2) 1px, transparent 1px, transparent 4px);
+}
+
+/* Dock Icon Styles */
+.dock-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    margin: 0 5px;
+    transition: transform 0.2s, margin-bottom 0.2s;
+}
+
+.dock-item img {
+    width: 100%;
+    height: 100%;
+}
+
+.dock-item .app-label {
+    display: none;
+    position: absolute;
+    bottom: 85px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.dock-item:hover .app-label {
+    display: block;
+}
+
+/* Calculator Styles */
+.calculator {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #333;
+  color: white;
+}
+
+.calculator .display {
+  background-color: #333;
+  color: white;
+  text-align: right;
+  font-size: 2.5em;
+  padding: 20px;
+  flex: 1;
+}
+
+.calculator .keys {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+}
+
+.calculator .key {
+  background-color: #666;
+  border: 1px solid #333;
+  padding: 15px;
+  text-align: center;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+
+.calculator .key:active {
+  background-color: #444;
+}
+
+.calculator .key.operator {
+  background-color: #f69906;
+}
+
+.calculator .key.operator:active {
+  background-color: #c47a04;
+}
+
+.calculator .key.zero {
+  grid-column: span 2;
+}
+
+/* Placeholder Icon Styles */
+.dock-item.text-edit-placeholder,
+.dock-item.calculator-placeholder {
+  width: 64px;
+  height: 64px;
+  background-color: #f0f0f0;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 10px;
+  position: relative;
+}
+
+.dock-item.text-edit-placeholder::before {
+  content: '';
+  position: absolute;
+  width: 30px;
+  height: 40px;
+  background-color: white;
+  border: 1px solid #999;
+}
+
+.dock-item.text-edit-placeholder::after {
+  content: 'Aa';
+  font-size: 24px;
+  color: #333;
+  position: absolute;
+}
+
+.dock-item.calculator-placeholder {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 3px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.dock-item.calculator-placeholder::before {
+  content: '';
+  grid-column: span 2;
+  background-color: #555;
+  border-radius: 3px;
+}
+
+.dock-item.calculator-placeholder > div {
+  background-color: #777;
+  border-radius: 3px;
+}
+
+.dock-item.calculator-placeholder::after {
+  content: '123';
+  position: absolute;
+  font-size: 24px;
+  color: #555;
+}
+
+/* PaintBrush Styles */
+.paintbrush-app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #eee;
+}
+
+.paintbrush-app .toolbar {
+  padding: 5px;
+  background-color: #d0d0d0;
+  border-bottom: 1px solid #999;
+}
+
+.paintbrush-app .canvas {
+  flex-grow: 1;
+  cursor: crosshair;
+}

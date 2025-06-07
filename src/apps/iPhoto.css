@@ -1,0 +1,184 @@
+.iphoto-app {
+  display: flex;
+  height: 100%;
+  background-color: #3a3a3a;
+  color: white;
+}
+
+.iphoto-sidebar {
+  width: 180px;
+  background-color: #2e2e2e;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.source-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 13px;
+}
+
+.source-list .header {
+  font-weight: bold;
+  color: #999;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+
+.source-list li {
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.source-list li.selected {
+  background-color: #4a90e2;
+}
+
+.iphoto-main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.iphoto-toolbar {
+  background-color: #222;
+  padding: 8px 12px;
+  border-bottom: 1px solid #111;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.iphoto-toolbar .slideshow-button {
+  float: right;
+  background-color: #555;
+  color: white;
+  border: 1px solid #777;
+  border-radius: 5px;
+  padding: 3px 10px;
+  cursor: pointer;
+}
+
+.iphoto-grid {
+  flex-grow: 1;
+  padding: 10px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.iphoto-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Photo Viewer Styles */
+.iphoto-viewer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10001; /* Higher than window z-index */
+}
+
+.iphoto-viewer img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 5px;
+}
+
+.iphoto-viewer .close-viewer {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  color: white;
+  font-size: 40px;
+  cursor: pointer;
+}
+
+/* Slideshow Styles */
+.slideshow-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  z-index: 10002; /* Higher than photo viewer */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slideshow-container img {
+  max-width: 100%;
+  max-height: 100%;
+  animation: fadeIn 1s;
+}
+
+.slideshow-container .close-slideshow {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  color: white;
+  font-size: 40px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+@keyframes kenburns {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  100% {
+    transform: scale(var(--zoom, 1.2)) translate(var(--x, 0), var(--y, 0));
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.event-stack {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+.event-stack [class^="stack-item-"] {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 1px solid white;
+  border-radius: 3px;
+  background-size: cover;
+  background-position: center;
+}
+
+.stack-item-1 { z-index: 3; transform: rotate(-5deg); }
+.stack-item-2 { z-index: 2; transform: rotate(2deg); }
+.stack-item-3 { z-index: 1; transform: rotate(8deg); }
+
+.event-name {
+  flex-grow: 1;
+}
+
+.photo-count {
+  color: #888;
+  font-size: 12px;
+} 
