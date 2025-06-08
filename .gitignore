@@ -24,9 +24,9 @@ dist-ssr
 *.sw?
 
 # Ignore large image assets
-public/icons/*.png
-public/icons/*.jpg
-public/icons/*.jpeg
+# public/icons/*.png
+# public/icons/*.jpg
+# public/icons/*.jpeg
 
 # Ignore other large media
-public/aurora.jpg
+# public/aurora.jpg
