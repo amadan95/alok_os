@@ -10,6 +10,7 @@ import Safari from './apps/Safari';
 import QuickTime from './apps/QuickTime';
 import iPod from './apps/iPod';
 
+/*
 Dock.addApplication({
   name: 'TextEdit',
   icon: '/icons/TextEdit.png',
@@ -27,36 +28,39 @@ Dock.addApplication({
   icon: '/icons/Microsoft Paint PNG.png',
   action: () => PaintBrush.launch()
 });
+*/
 
 Dock.addApplication({
-  name: 'iPhoto',
-  icon: '/icons/iPhoto.png',
+  name: 'Photos',
+  icon: '/icons/Film Cannister from Photoroom.png',
   action: () => iPhoto.launch()
 });
 
 Dock.addApplication({
-  name: 'iTunes',
-  icon: '/icons/iTunes.png',
-  action: () => iTunes.launch()
-});
-
-Dock.addApplication({
-  name: 'Safari',
-  icon: '/icons/Safari.png',
-  action: () => Safari.launch()
-});
-
-Dock.addApplication({
-  name: 'QuickTime Player',
-  icon: '/icons/QuickTime.png',
+  name: 'Movies',
+  icon: '/icons/Photoroom VHS.png',
   action: () => QuickTime.launch()
 });
 
 Dock.addApplication({
   name: 'iPod',
-  icon: '/icons/ipod.png',
+  icon: '/icons/iPod Image from Photoroom.png',
   action: () => iPod.launch()
 });
+
+Dock.addApplication({
+  name: 'Safari',
+  icon: '/icons/Safari Icon from Photoroom.png',
+  action: () => Safari.launch()
+});
+
+/*
+Dock.addApplication({
+  name: 'iTunes',
+  icon: '/icons/iTunes.png',
+  action: () => iTunes.launch()
+});
+*/
 
 function updateDateTime() {
   const dateTimeElement = document.getElementById('date-time');

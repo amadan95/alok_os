@@ -9,7 +9,7 @@ class iTunes {
   launch() {
     const spotifyPlaylistID = '2sqdjmKSomv1u0dKcqQMcm';
     const content = `
-      <div class="itunes-app" style="background-color: #1a1a1a; display: flex; flex-direction: column; height: 100%;">
+      <div class="itunes-app">
         <iframe 
           src="https://open.spotify.com/embed/playlist/${spotifyPlaylistID}?utm_source=generator&theme=0" 
           width="100%" 

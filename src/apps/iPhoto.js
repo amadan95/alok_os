@@ -3,7 +3,7 @@ import './iPhoto.css';
 
 class iPhoto {
   constructor() {
-    this.name = 'iPhoto';
+    this.name = 'Photos';
   }
 
   launch() {
@@ -21,10 +21,11 @@ class iPhoto {
     `;
 
     WindowManager.createWindow({
-      title: 'iPhoto',
+      title: 'Photos',
       width: '900px',
       height: '700px',
       content: content,
+      className: 'iphoto-window',
     });
   }
 }

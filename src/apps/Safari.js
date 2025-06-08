@@ -15,11 +15,11 @@ class Safari {
             <button class="nav-button forward" disabled>▶</button>
           </div>
           <div class="address-bar-container">
-            <input type="text" class="address-bar" value="https://oldgoogle.neocities.org/2009/">
+            <input type="text" class="address-bar" value="https://www.google.com">
           </div>
         </div>
         <div class="safari-content">
-          <iframe src="http://localhost:3001/?url=https://oldgoogle.neocities.org/2009/" class="browser-frame" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+          <iframe src="http://localhost:3001/?url=https://www.google.com" class="browser-frame" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation allow-modals" allowfullscreen></iframe>
         </div>
       </div>
     `;
@@ -36,7 +36,16 @@ class Safari {
     const backButton = win.querySelector('.back');
     const forwardButton = win.querySelector('.forward');
 
-    let history = ['https://oldgoogle.neocities.org/2009/'];
+    // Add error handling for iframe loading
+    iframe.addEventListener('load', () => {
+      console.log('Safari iframe loaded successfully');
+    });
+    
+    iframe.addEventListener('error', (e) => {
+      console.error('Safari iframe error:', e);
+    });
+
+    let history = ['https://www.google.com'];
     let historyIndex = 0;
 
     const updateNavButtons = () => {
@@ -84,22 +93,6 @@ class Safari {
         historyIndex++;
         navigate(history[historyIndex]);
         updateNavButtons();
-      }
-    });
-
-    iframe.addEventListener('load', () => {
-      try {
-        const newUrl = iframe.contentWindow.location.href;
-        if (newUrl && newUrl !== 'about:blank' && newUrl !== history[historyIndex]) {
-          addressBar.value = newUrl;
-          history = history.slice(0, historyIndex + 1);
-          history.push(newUrl);
-          historyIndex++;
-          updateNavButtons();
-        }
-      } catch (e) {
-        // Cross-origin error, can't access iframe location
-        // The address bar will just show the last manually entered URL
       }
     });
   }

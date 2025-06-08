@@ -6,18 +6,10 @@ class WindowManager {
     this.desktop = document.getElementById('desktop');
   }
 
-  createWindow(options) {
-    const win = document.createElement('div');
-    win.className = 'window';
-    win.style.width = options.width || '400px';
-    win.style.height = options.height || '300px';
-    win.style.left = options.x || '100px';
-    win.style.top = options.y || '100px';
-    win.style.zIndex = this.zIndexCounter++;
-
+  createHeader(titleText, win, resizable) {
     const header = document.createElement('div');
     header.className = 'window-header';
-    
+
     const controls = document.createElement('div');
     controls.className = 'window-controls';
 
@@ -40,18 +32,63 @@ class WindowManager {
 
     const title = document.createElement('span');
     title.className = 'window-title';
-    title.textContent = options.title || 'Untitled';
+    title.textContent = titleText || 'Untitled';
     header.appendChild(title);
+
+    // Dragging logic
+    let isDragging = false;
+    let dragOffsetX, dragOffsetY;
+
+    header.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        dragOffsetX = e.clientX - win.offsetLeft;
+        dragOffsetY = e.clientY - win.offsetTop;
+        this.setActive(win);
+        e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+            win.style.left = `${e.clientX - dragOffsetX}px`;
+            win.style.top = `${e.clientY - dragOffsetY}px`;
+        }
+    });
+
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
+
+    return header;
+  }
+
+  createWindow(options) {
+    const win = document.createElement('div');
+    win.className = 'window';
+    if (options.className) {
+      win.classList.add(options.className);
+    }
+    win.style.width = options.width || '400px';
+    win.style.height = options.height || '300px';
+    win.style.left = options.x || '100px';
+    win.style.top = options.y || '100px';
+    win.style.zIndex = this.zIndexCounter++;
+
+    const header = this.createHeader(options.title, win, options.resizable);
+    win.appendChild(header);
 
     const body = document.createElement('div');
     body.className = 'window-body';
-    body.innerHTML = options.content || '';
+
+    const contentPane = document.createElement('div');
+    contentPane.className = 'app-content';
+    contentPane.innerHTML = options.content || '';
+    body.appendChild(contentPane);
+
+    win.appendChild(body);
 
     const resizeHandle = document.createElement('div');
     resizeHandle.className = 'resize-handle bottom-right';
 
-    win.appendChild(header);
-    win.appendChild(body);
     win.appendChild(resizeHandle);
     this.desktop.appendChild(win);
 
@@ -63,21 +100,27 @@ class WindowManager {
 
     win.addEventListener('mousedown', () => this.setActive(win));
 
-    closeButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.closeWindow(win);
-    });
+    const closeButton = header.querySelector('.window-control.close');
+    if (closeButton) {
+      closeButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.closeWindow(win);
+      });
+    }
 
-    minimizeButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const appIcon = document.querySelector(`.dock-item img[alt="${options.title}"]`);
-      if (appIcon) {
-        this._animateMinimize(win, appIcon);
-      } else {
-        // Fallback if icon isn't found
-        win.style.display = 'none';
-      }
-    });
+    const minimizeButton = header.querySelector('.window-control.minimize');
+    if (minimizeButton) {
+      minimizeButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const appIcon = document.querySelector(`.dock-item img[alt="${options.title}"]`);
+        if (appIcon) {
+          this._animateMinimize(win, appIcon);
+        } else {
+          // Fallback if icon isn't found
+          win.style.display = 'none';
+        }
+      });
+    }
 
     return win;
   }

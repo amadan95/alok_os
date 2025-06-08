@@ -7,6 +7,11 @@
   user-select: none;
 }
 
+.itunes-app iframe {
+  flex-grow: 1;
+  border-radius: inherit;
+}
+
 .itunes-header {
   background: linear-gradient(to bottom, #e6e6e6, #d1d1d1);
   padding: 8px;

@@ -1,0 +1,11 @@
+{
+  "watch": ["proxy-server.cjs"],
+  "ext": "js,cjs,json",
+  "ignore": ["node_modules/", "src/", "public/"],
+  "delay": "1000",
+  "verbose": true,
+  "restartable": "rs",
+  "env": {
+    "NODE_ENV": "development"
+  }
+} 

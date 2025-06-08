@@ -5,6 +5,12 @@
   color: white;
 }
 
+.iphoto-app iframe {
+  flex-grow: 1; /* Ensure iframe fills the container */
+  border: none;
+  border-radius: inherit; /* Inherit corner rounding from parent */
+}
+
 .iphoto-sidebar {
   width: 180px;
   background-color: #2e2e2e;
@@ -181,4 +187,8 @@
 .photo-count {
   color: #888;
   font-size: 12px;
+}
+
+.window.iphoto-window .window-body {
+    padding: 40px;
 } 

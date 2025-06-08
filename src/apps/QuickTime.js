@@ -3,180 +3,186 @@ import './QuickTime.css';
 
 class QuickTime {
   constructor() {
-    this.name = 'QuickTime Player';
-    this.playlistId = 'PLjcLm8ZY67iNdptEc00nQbLzKIhHrdQx_';
+    this.name = 'Movies';
     this.player = null;
     this.isPlaying = false;
     this.isPlayerReady = false;
+    this.isRepeating = false;
   }
 
-  async launch() {
-    const content = `
-      <div class="quicktime-app">
-        <div class="quicktime-player">
-          <div class="video-container">
-            <div id="youtube-player"></div>
-          </div>
-          <div class="quicktime-controls">
-            <div class="playback-controls">
-              <button class="prev-button">◀◀</button>
-              <button class="play-pause-button">❚❚</button>
-              <button class="next-button">▶▶</button>
-            </div>
-            <div class="progress-container">
-              <div class="progress-bar">
-                <div class="progress-fill"></div>
+  _getDOM() {
+    return `
+      <div class="quicktime-app vhs-theme">
+        <div class="vhs-top-panel">
+          <div class="vhs-screen">
+              <div class="vhs-screen-top-labels">
+                  <span>TRACK</span>
+                  <span>TIME</span>
+                  <span>TITLE</span>
               </div>
-              <span class="time-display">00:00 / 00:00</span>
-            </div>
-            <div class="volume-container">
-              <input type="range" class="volume-slider" min="0" max="100" value="100">
-            </div>
+              <div class="vhs-screen-bottom-display">
+                  <span class="track-display">01</span>
+                  <span class="time-display">00:00</span>
+                  <div class="title-container">
+                      <span class="title-display">--</span>
+                  </div>
+              </div>
+          </div>
+        </div>
+
+        <div class="video-container">
+          <div id="youtube-player"></div>
+        </div>
+        
+        <div class="vhs-bottom-panel">
+          <div class="progress-bar-container">
+            <div class="progress-bar"></div>
+          </div>
+          <div class="vhs-buttons-container">
+              <div class="vhs-main-controls">
+                <button class="vhs-button rewind-button">◀◀</button>
+                <button class="vhs-button play-pause-button">▶</button>
+                <button class="vhs-button fast-forward-button">▶▶</button>
+              </div>
+              <div class="vhs-secondary-controls">
+                  <button class="vhs-button shuffle-button">SHUFFLE</button>
+                  <button class="vhs-button repeat-button">REPEAT</button>
+              </div>
           </div>
         </div>
       </div>
     `;
+  }
 
-    const win = WindowManager.createWindow({
-      title: 'QuickTime Player',
+  async launch() {
+    const content = this._getDOM();
+
+    this.win = WindowManager.createWindow({
+      title: 'Movies',
       width: '640px',
-      height: '480px',
+      height: '520px', // Increased height for progress bar
       content: content,
+      className: 'quicktime-window' // Custom class for padding
     });
 
-    await this._initializeYouTubePlayer(win);
+    await this._initializeYouTubePlayer(this.win);
   }
 
   async _initializeYouTubePlayer(win) {
     try {
-      // Load YouTube IFrame API
       if (!window.YT) {
         const tag = document.createElement('script');
         tag.src = 'https://www.youtube.com/iframe_api';
         const firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-        await new Promise(resolve => {
-          window.onYouTubeIframeAPIReady = resolve;
-        });
+        await new Promise(resolve => { window.onYouTubeIframeAPIReady = resolve; });
       }
 
-      // Create YouTube player with the user's playlist
       this.player = new window.YT.Player('youtube-player', {
         height: '100%',
         width: '100%',
         playerVars: {
-          listType: 'playlist',
-          list: this.playlistId,
           autoplay: 1,
           controls: 0,
           modestbranding: 1,
           rel: 0,
           showinfo: 0,
-          enablejsapi: 1
+          listType: 'playlist',
+          list: 'PLjcLm8ZY67iNdptEc00nQbLzKIhHrdQx_',
+          origin: window.location.origin
         },
         events: {
-          onReady: (event) => this._onPlayerReady(event),
-          onStateChange: (event) => this._onPlayerStateChange(event),
-          onError: (event) => this._onPlayerError(event)
+          'onReady': (e) => this._onPlayerReady(e, win),
+          'onStateChange': this._onPlayerStateChange.bind(this)
         }
       });
-
-      // Add control event listeners
-      const playPauseButton = win.querySelector('.play-pause-button');
-      const prevButton = win.querySelector('.prev-button');
-      const nextButton = win.querySelector('.next-button');
-      const volumeSlider = win.querySelector('.volume-slider');
-      const progressBar = win.querySelector('.progress-bar');
-
-      playPauseButton.addEventListener('click', () => this._togglePlayPause());
-      
-      prevButton.addEventListener('click', () => {
-        if (this.player && this.isPlayerReady) {
-          this.player.previousVideo();
-        }
-      });
-      
-      nextButton.addEventListener('click', () => {
-        if (this.player && this.isPlayerReady) {
-          this.player.nextVideo();
-        }
-      });
-
-      volumeSlider.addEventListener('input', (e) => {
-        if (this.player && this.isPlayerReady) {
-          this.player.setVolume(parseInt(e.target.value));
-        }
-      });
-
-      progressBar.addEventListener('click', (e) => {
-        if (this.player && this.isPlayerReady) {
-          const rect = progressBar.getBoundingClientRect();
-          const pos = (e.clientX - rect.left) / rect.width;
-          const duration = this.player.getDuration();
-          this.player.seekTo(duration * pos, true);
-        }
-      });
-
-      // Update progress bar
-      setInterval(() => {
-        if (this.player && this.isPlayerReady && this.isPlaying) {
-          const currentTime = this.player.getCurrentTime();
-          const duration = this.player.getDuration();
-          const progress = (currentTime / duration) * 100;
-          
-          const progressFill = win.querySelector('.progress-fill');
-          if (progressFill) progressFill.style.width = `${progress}%`;
-          
-          const timeDisplay = win.querySelector('.time-display');
-          if (timeDisplay) timeDisplay.textContent = `${this._formatTime(currentTime)} / ${this._formatTime(duration)}`;
-        }
-      }, 1000);
-
     } catch (error) {
       console.error('Error initializing YouTube player:', error);
     }
   }
 
-  _onPlayerReady(event) {
+  _onPlayerReady(event, win) {
     this.isPlayerReady = true;
-    this.isPlaying = true;
-    event.target.setShuffle(true); // Shuffle the playlist
+    this.player.setVolume(50);
+    this.player.setShuffle(true);
     event.target.playVideo();
+    
+    // Setup event listeners
+    this._setupControls(win);
+
+    // Start progress updater
+    setInterval(() => this._updateProgress(), 250);
+
+    // Align progress bar
+    const controlsContainer = win.querySelector('.vhs-buttons-container');
+    const progressBarContainer = win.querySelector('.progress-bar-container');
+    progressBarContainer.style.width = `${controlsContainer.offsetWidth}px`;
+    progressBarContainer.style.margin = `0 auto`;
+    new ResizeObserver(() => {
+      progressBarContainer.style.width = `${controlsContainer.offsetWidth}px`;
+    }).observe(controlsContainer);
+  }
+
+  _setupControls(win) {
+    const playPauseButton = win.querySelector('.play-pause-button');
+    const rewindButton = win.querySelector('.rewind-button');
+    const fastForwardButton = win.querySelector('.fast-forward-button');
+    const repeatButton = win.querySelector('.repeat-button');
+    const shuffleButton = win.querySelector('.shuffle-button');
+    const progressBarContainer = win.querySelector('.progress-bar-container');
+
+    playPauseButton.addEventListener('click', () => this.togglePlayPause());
+    rewindButton.addEventListener('click', () => this.player.previousVideo());
+    fastForwardButton.addEventListener('click', () => this.player.nextVideo());
+    
+    repeatButton.addEventListener('click', () => {
+      this.isRepeating = !this.isRepeating;
+      repeatButton.classList.toggle('active', this.isRepeating);
+    });
+
+    shuffleButton.addEventListener('click', () => {
+        this.player.setShuffle(true);
+        this.player.nextVideo();
+    });
+
+    progressBarContainer.addEventListener('click', (e) => {
+      if (!this.player || typeof this.player.getDuration !== 'function') return;
+      const rect = progressBarContainer.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const percentage = clickX / rect.width;
+      const duration = this.player.getDuration();
+      this.player.seekTo(duration * percentage, true);
+    });
   }
 
   _onPlayerStateChange(event) {
     if (!this.isPlayerReady) return;
 
-    const win = document.querySelector('.quicktime-app');
-    if (!win) return;
-    const playPauseButton = win.querySelector('.play-pause-button');
+    const playPauseButton = this.win.querySelector('.play-pause-button');
     
-    switch(event.data) {
-      case window.YT.PlayerState.PLAYING:
-        this.isPlaying = true;
-        if (playPauseButton) playPauseButton.textContent = '❚❚';
-        break;
-      case window.YT.PlayerState.PAUSED:
-        this.isPlaying = false;
-        if (playPauseButton) playPauseButton.textContent = '▶';
-        break;
-      case window.YT.PlayerState.ENDED:
-        // The player will automatically play the next video in the shuffled playlist.
-        // No action needed here.
-        break;
+    if (event.data === window.YT.PlayerState.PLAYING) {
+      this.isPlaying = true;
+      if (playPauseButton) {
+        playPauseButton.textContent = '❚❚';
+        playPauseButton.classList.add('playing');
+      }
+      this._updateVideoInfo();
+    } else if (event.data === window.YT.PlayerState.PAUSED) {
+      this.isPlaying = false;
+      if (playPauseButton) {
+        playPauseButton.textContent = '▶';
+        playPauseButton.classList.remove('playing');
+      }
+    } else if (event.data === window.YT.PlayerState.ENDED) {
+      if (this.isRepeating) {
+        this.player.seekTo(0);
+        this.player.playVideo();
+      }
     }
   }
 
-  _onPlayerError(event) {
-    console.error('YouTube player error:', event.data);
-    // Attempt to play the next video if an error occurs
-    if (this.player && this.isPlayerReady) {
-        this.player.nextVideo();
-    }
-  }
-
-  _togglePlayPause() {
+  togglePlayPause() {
     if (!this.player || !this.isPlayerReady) return;
     if (this.isPlaying) {
       this.player.pauseVideo();
@@ -185,10 +191,52 @@ class QuickTime {
     }
   }
 
-  _formatTime(time) {
-    const seconds = Math.floor(time % 60);
-    const minutes = Math.floor(time / 60);
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  _updateProgress() {
+    if (this.player && typeof this.player.getCurrentTime === 'function' && this.isPlayerReady) {
+      const currentTime = this.player.getCurrentTime();
+      const duration = this.player.getDuration();
+      
+      const timeDisplay = this.win.querySelector('.time-display');
+      if (timeDisplay) {
+        timeDisplay.textContent = this._formatTime(currentTime);
+      }
+      
+      const progressBar = this.win.querySelector('.progress-bar');
+      if (progressBar && duration > 0) {
+        const percentage = (currentTime / duration) * 100;
+        progressBar.style.width = `${percentage}%`;
+      }
+    }
+  }
+
+  _updateVideoInfo() {
+    if (this.player && typeof this.player.getVideoData === 'function' && this.win) {
+      const videoData = this.player.getVideoData();
+      const playlistIndex = this.player.getPlaylistIndex();
+      
+      const trackDisplay = this.win.querySelector('.track-display');
+      const titleDisplay = this.win.querySelector('.title-display');
+      const titleContainer = this.win.querySelector('.title-container');
+
+      if (trackDisplay) {
+        trackDisplay.textContent = (playlistIndex + 1).toString().padStart(2, '0');
+      }
+      if (titleDisplay) {
+        titleDisplay.textContent = videoData.title;
+        // Check for overflow and add scrolling class
+        if (titleDisplay.scrollWidth > titleContainer.clientWidth) {
+          titleDisplay.classList.add('scrolling');
+        } else {
+          titleDisplay.classList.remove('scrolling');
+        }
+      }
+    }
+  }
+
+  _formatTime(seconds) {
+    const min = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const sec = Math.floor(seconds % 60).toString().padStart(2, '0');
+    return `${min}:${sec}`;
   }
 }
 

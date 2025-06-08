@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Ignore large image assets
+public/icons/*.png
+public/icons/*.jpg
+public/icons/*.jpeg
+
+# Ignore other large media
+public/aurora.jpg

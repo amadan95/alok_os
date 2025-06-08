@@ -1,125 +1,147 @@
 const express = require('express');
 const { createProxyMiddleware, fixRequestBody } = require('http-proxy-middleware');
 const cors = require('cors');
-const fs = require('fs');
-const path = require('path');
 
 const app = express();
-const PORT = 3001; // Using a different port from Vite
+const PORT = 3001;
 
 app.use(cors());
 
-app.get('/api/music', (req, res) => {
-  try {
-    const musicDirectory = path.join(__dirname, 'public/media/music');
-    console.log(`Scanning for music in: ${musicDirectory}`); // Log the directory path
-
-    const dirents = fs.readdirSync(musicDirectory, { withFileTypes: true });
-
-    const albums = dirents
-      .filter(dirent => dirent.isDirectory())
-      .map(dirent => {
-        const albumPath = path.join(musicDirectory, dirent.name);
-        try {
-          const songFiles = fs.readdirSync(albumPath);
-          const songs = songFiles
-            .filter(file => /\.(mp3|flac|wav|m4a)$/i.test(file))
-            .map(songFile => ({
-              title: path.parse(songFile).name,
-              artist: dirent.name.split(' - ')[0], // Simple artist parsing
-              album: dirent.name,
-              url: `/media/music/${dirent.name}/${encodeURIComponent(songFile)}`
-            }));
-          
-          return {
-            name: dirent.name,
-            songs: songs
-          };
-        } catch (e) {
-          console.error(`Could not read album directory ${albumPath}:`, e);
-          return null; // Return null for albums that can't be read
-        }
-      });
-
-    res.json(albums.filter(Boolean)); // Filter out nulls from failed reads
-  } catch (err) {
-    console.error('Error in /api/music:', err);
-    if (err.code === 'ENOENT') {
-      // If the directory doesn't exist, return an empty array gracefully
-      return res.json([]);
+// Middleware to remove security headers from proxied responses
+app.use((req, res, next) => {
+  const originalSetHeader = res.setHeader;
+  res.setHeader = function(name, value) {
+    const lowerName = name.toLowerCase();
+    if (lowerName === 'x-frame-options' || lowerName === 'content-security-policy') {
+      return;
     }
-    // For any other error, send a 500 response with a JSON error message
-    return res.status(500).json({ error: 'Server error while getting music list.' });
-  }
+    originalSetHeader.call(this, name, value);
+  };
+  next();
+});
+
+// The single, clean endpoint for the iPod app
+app.get('/api/music', (req, res) => {
+  const googleDrivePlaylist = {
+    playlistName: "Alok's Google Drive Mix",
+    tracks: [
+      {
+        title: 'Dark Fantasy',
+        artist: 'Kanye West',
+        album: 'My Beautiful Dark Twisted Fantasy',
+        duration: 280, // Placeholder
+        previewUrl: 'https://drive.google.com/file/d/10ryk8CRJVhfyEJL8VA4kJeqexaPBpoUS/view?usp=sharing',
+        albumArt: null,
+      },
+      {
+        title: 'Chanel',
+        artist: 'Frank Ocean',
+        album: 'Single',
+        duration: 210, // Placeholder
+        previewUrl: 'https://drive.google.com/file/d/1ml9V2-HHzClleuk5_c3OQkZ1-sNhCB22/view?usp=sharing',
+        albumArt: null,
+      },
+      {
+        title: 'Icon',
+        artist: 'Jaden',
+        album: 'SYRE',
+        duration: 220, // Placeholder
+        previewUrl: 'https://drive.google.com/file/d/12S6M0LJ4mXklHUq6r0dhmez7tE77Kc_U/view?usp=drive_link',
+        albumArt: null,
+      },
+      {
+        title: "God's Plan (Cover)",
+        artist: 'Ali Gatie',
+        album: 'Single',
+        duration: 180, // Placeholder
+        previewUrl: 'https://drive.google.com/file/d/1zwvQm5SrU0Swh4IC3uWkPzziPDKMy3YB/view?usp=drive_link',
+        albumArt: null,
+      },
+      {
+        title: 'Mask Off',
+        artist: 'Future',
+        album: 'FUTURE',
+        duration: 204, // Placeholder
+        previewUrl: 'https://drive.google.com/file/d/1HpuX4hv-oAhVssa1DEVdVFCeLWNrrMYy/view?usp=drive_link',
+        albumArt: null,
+      },
+    ]
+  };
+  res.json(googleDrivePlaylist);
 });
 
 const proxy = createProxyMiddleware({
-  changeOrigin: true,
-  logLevel: 'debug',
-  onProxyReq: fixRequestBody,
   router: (req) => {
-    let targetUrlString = req.query.url;
-
-    if (!targetUrlString && req.headers.referer) {
-      try {
-        const refererUrl = new URL(req.headers.referer);
-        // Make sure we only use referer from our own proxy
-        if (refererUrl.hostname === req.hostname && refererUrl.port === String(PORT) && refererUrl.searchParams.has('url')) {
-          targetUrlString = refererUrl.searchParams.get('url');
-        }
-      } catch (e) {
-        console.error('Invalid Referer URL', req.headers.referer);
-      }
+    const targetUrlString = req.query.url;
+    if (!targetUrlString) {
+      return null;
     }
-
-    if (targetUrlString) {
-      if (!targetUrlString.startsWith('http')) {
-        targetUrlString = 'https://' + targetUrlString;
-      }
-      try {
-        const targetUrl = new URL(targetUrlString);
-        return `${targetUrl.protocol}//${targetUrl.host}`;
-      } catch (e) {
-        console.error('Invalid target URL:', targetUrlString);
-      }
+    try {
+      const targetUrl = new URL(targetUrlString);
+      return targetUrl.origin;
+    } catch (e) {
+      console.error(`Invalid proxy URL: ${targetUrlString}`);
+      return null;
     }
-    
-    return null; // Don't proxy if we can't determine a target
   },
   pathRewrite: (path, req) => {
-    // Only rewrite for the initial request that has the `url` param.
-    if (req.query.url) {
-      let targetUrlString = req.query.url;
-      if (!targetUrlString.startsWith('http')) {
-        targetUrlString = 'https://' + targetUrlString;
-      }
-      try {
-        const targetUrl = new URL(targetUrlString);
-        return targetUrl.pathname + targetUrl.search;
-      } catch (e) {
-        // fallback to original path
-      }
+    const targetUrlString = req.query.url;
+    // For Google Drive, we need to transform the URL
+    if (targetUrlString.includes('drive.google.com')) {
+      const url = new URL(targetUrlString);
+      const fileId = url.pathname.split('/')[3];
+      const newPath = `/uc?export=download&id=${fileId}`;
+      console.log(`Rewriting Google Drive path to: ${newPath}`);
+      return newPath;
     }
-    // For asset requests, `path` is what we want (e.g. /images/logo.gif)
-    return path;
+    // Fallback for other URLs
+    const targetUrl = new URL(targetUrlString);
+    const newPath = targetUrl.pathname + targetUrl.search;
+    console.log(`Rewriting path to: ${newPath}`);
+    return newPath;
+  },
+  changeOrigin: true,
+  followRedirects: true, // Important for Google Drive
+  logLevel: 'debug',
+  onProxyReq: fixRequestBody,
+  onProxyRes: (proxyRes, req, res) => {
+    // ... existing code ...
   },
   onError: (err, req, res) => {
-    console.error('Proxy Error:', err.message);
-    if (!res.headersSent) {
-      res.writeHead(500, { 'Content-Type': 'text/plain' });
-    }
-    res.end('Proxy Error: ' + err.message);
+    console.error(`Proxy Error: ${err.message}`);
+    res.status(500).send('Proxy Error');
   }
 });
 
 app.use('/', proxy);
 
-// Add a final handler for requests that weren't proxied
-app.use((req, res, next) => {
-    res.status(404).send('Resource not found.');
+const server = app.listen(PORT, () => {
+  console.log(`Proxy server listening on port ${PORT}`);
+  console.log(`Server PID: ${process.pid}`);
 });
 
+const gracefulShutdown = () => {
+  console.log('Received signal, shutting down gracefully...');
+  server.close(() => {
+    console.log('Closed out remaining connections.');
+    process.exit(0);
+  });
 
-app.listen(PORT, () => {
-  console.log(`Proxy server listening on port ${PORT}`);
+  // Force shutdown after 10 seconds
+  setTimeout(() => {
+    console.error('Could not close connections in time, forcefully shutting down');
+    process.exit(1);
+  }, 10000);
+};
+
+// Listen for termination signals
+process.on('SIGTERM', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.log(`Port ${PORT} is already in use. If you just restarted, wait a moment.`);
+  } else {
+    console.error('Server error:', err);
+  }
 }); 

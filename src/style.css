@@ -12,6 +12,9 @@ body, html {
   font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
   cursor: default;
   user-select: none;
+  background-image: url('/bg.jpg');
+  background-size: cover;
+  background-position: center;
 }
 
 #desktop {
@@ -66,15 +69,15 @@ body, html {
 /* Window Styles */
 .window {
   position: absolute;
+  background: transparent; /* Make window background see-through */
+  border: 1px solid rgba(200, 200, 200, 0.5);
   border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
   min-width: 200px;
   min-height: 150px;
   display: flex;
   flex-direction: column;
-  background-color: #f6f6f6; /* Fallback */
   transition: box-shadow 0.2s ease-in-out;
-  border: 1px solid rgba(0,0,0,0.3);
 }
 
 .window.active {
@@ -90,18 +93,19 @@ body, html {
 }
 
 .window-header {
-  height: 22px;
-  padding: 0 8px;
-  background: linear-gradient(to bottom, #e4e4e4, #c8c8c8);
+  background-color: rgba(220, 220, 220, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  color: #333;
+  padding: 6px;
+  cursor: move;
   border-top-left-radius: 7px;
   border-top-right-radius: 7px;
-  border-bottom: 1px solid #7a7a7a;
-  cursor: move;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   display: flex;
   align-items: center;
-  justify-content: center; /* Center title */
   position: relative;
-  color: #333;
+  text-shadow: 0 1px 1px rgba(255,255,255,0.3);
 }
 
 .window-controls {
@@ -143,20 +147,48 @@ body, html {
 }
 
 .window-title {
+  flex-grow: 1;
   font-size: 13px;
   text-shadow: 0 1px 0 rgba(255,255,255,0.6);
   padding: 0 5px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-align: center;
 }
 
 .window-body {
   flex-grow: 1;
+  position: relative;
   border-bottom-left-radius: 7px;
   border-bottom-right-radius: 7px;
   overflow: hidden;
-  position: relative;
+  background-color: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 15px;
+  display: flex;
+}
+
+.app-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: transparent; /* Apps should be transparent to show the glass */
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+/* This new pane creates the frosted glass effect for the content area */
+.window-glass-pane {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    overflow: auto; /* Allow content inside the pane to scroll */
+    display: flex;
+    flex-direction: column;
 }
 
 .resize-handle {
@@ -181,14 +213,14 @@ body, html {
     position: relative;
     margin: 0 5px;
     transition: transform 0.2s, margin-bottom 0.2s;
-    width: 64px;
-    height: 64px;
+    width: 96px;
+    height: 96px;
     background: transparent;
 }
 
 .dock-item img {
-    width: 64px;
-    height: 64px;
+    width: 96px;
+    height: 96px;
     object-fit: contain;
     display: block;
     z-index: 1;
@@ -197,7 +229,7 @@ body, html {
 .dock-item .app-label {
     display: none;
     position: absolute;
-    bottom: 85px;
+    bottom: 115px;
     background-color: rgba(0, 0, 0, 0.8);
     color: white;
     padding: 5px 10px;
@@ -232,7 +264,6 @@ body, html {
 .calculator .keys {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
 }
 
 .calculator .key {
@@ -258,6 +289,15 @@ body, html {
 
 .calculator .key.zero {
   grid-column: span 2;
+}
+
+/* TextEdit Styles */
+.text-editor {
+  background-color: white;
+  padding: 15px;
+  color: black;
+  font-size: 14px;
+  line-height: 1.6;
 }
 
 /* Placeholder Icon Styles */
@@ -314,10 +354,10 @@ body, html {
 }
 
 .dock-item.calculator-placeholder::after {
-  content: '123';
-  position: absolute;
-  font-size: 24px;
+  content: '1 2 3 + 4 5 6 - 7 8 9 × 0 . = ÷';
   color: #555;
+  font-size: 8px;
+  line-height: 1.2;
 }
 
 /* PaintBrush Styles */
@@ -401,4 +441,8 @@ body, html {
   height: 1px;
   background-color: #ccc;
   margin: 5px 0;
+}
+
+.window-title-bar-button.close:hover {
+  background-color: #ff5f57;
 }
