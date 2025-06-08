@@ -74,4 +74,15 @@ function updateDateTime() {
 updateDateTime();
 setInterval(updateDateTime, 1000);
 
+// Sound effect for clicks and drags
+const clickSound = new Audio('/sounds/click.mp3');
+
+document.addEventListener('mousedown', () => {
+  clickSound.currentTime = 0; // Rewind to the start
+  clickSound.play().catch(error => {
+    // Autoplay was prevented.
+    console.log("Play was prevented: ", error);
+  });
+});
+
 // Future JavaScript for LeopardWeb will go here.

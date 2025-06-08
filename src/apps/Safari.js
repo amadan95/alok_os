@@ -19,7 +19,7 @@ class Safari {
           </div>
         </div>
         <div class="safari-content">
-          <iframe src="http://localhost:3001/?url=https://www.google.com" class="browser-frame" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation allow-modals" allowfullscreen></iframe>
+          <iframe src="http://localhost:3001/" class="browser-frame" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation allow-modals" allowfullscreen></iframe>
         </div>
       </div>
     `;
@@ -63,8 +63,8 @@ class Safari {
         // It's a URL without protocol
         fullUrl = 'https://' + fullUrl;
       }
-      iframe.src = `http://localhost:3001/?url=${encodeURIComponent(fullUrl)}`;
-      addressBar.value = fullUrl;
+      iframe.src = `http://localhost:3001/`;
+      addressBar.value = "https://www.google.com";
     };
 
     addressBar.addEventListener('keydown', (e) => {
