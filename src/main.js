@@ -11,10 +11,12 @@ import QuickTime from './apps/QuickTime';
 import iPod from './apps/iPod';
 
 // Import icons
+/*
 import photosIcon from '/icons/Film Cannister from Photoroom.png';
 import moviesIcon from '/icons/Photoroom VHS.png';
 import ipodIcon from '/icons/iPod Image from Photoroom.png';
 import safariIcon from '/icons/Safari Icon from Photoroom.png';
+*/
 
 /*
 Dock.addApplication({
@@ -38,25 +40,25 @@ Dock.addApplication({
 
 Dock.addApplication({
   name: 'Photos',
-  icon: photosIcon,
+  icon: '/icons/Film Cannister from Photoroom.png',
   action: () => iPhoto.launch()
 });
 
 Dock.addApplication({
   name: 'Movies',
-  icon: moviesIcon,
+  icon: '/icons/Photoroom VHS.png',
   action: () => QuickTime.launch()
 });
 
 Dock.addApplication({
   name: 'iPod',
-  icon: ipodIcon,
+  icon: '/icons/iPod Image from Photoroom.png',
   action: () => iPod.launch()
 });
 
 Dock.addApplication({
   name: 'Safari',
-  icon: safariIcon,
+  icon: '/icons/Safari Icon from Photoroom.png',
   action: () => Safari.launch()
 });
 
