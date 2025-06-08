@@ -88,7 +88,7 @@ class QuickTime {
           controls: 0,
           rel: 0,
           listType: 'playlist',
-          list: 'PLjcLm8ZY67iNdptEc00nQbLzKIhHrdQx_',
+          list: 'PLjcLm8ZY67iO0t3TTAIlFh1CGRFWbLKef',
           origin: window.location.origin
         },
         events: {
