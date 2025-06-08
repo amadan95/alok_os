@@ -32,6 +32,7 @@ class QuickTime {
 
         <div class="video-container">
           <div id="youtube-player"></div>
+          <div class="video-overlay"></div>
         </div>
         
         <div class="vhs-bottom-panel">
@@ -85,9 +86,7 @@ class QuickTime {
         playerVars: {
           autoplay: 1,
           controls: 0,
-          modestbranding: 1,
           rel: 0,
-          showinfo: 0,
           listType: 'playlist',
           list: 'PLjcLm8ZY67iNdptEc00nQbLzKIhHrdQx_',
           origin: window.location.origin
@@ -131,10 +130,12 @@ class QuickTime {
     const repeatButton = win.querySelector('.repeat-button');
     const shuffleButton = win.querySelector('.shuffle-button');
     const progressBarContainer = win.querySelector('.progress-bar-container');
+    const videoOverlay = win.querySelector('.video-overlay');
 
     playPauseButton.addEventListener('click', () => this.togglePlayPause());
     rewindButton.addEventListener('click', () => this.player.previousVideo());
     fastForwardButton.addEventListener('click', () => this.player.nextVideo());
+    videoOverlay.addEventListener('click', () => this.togglePlayPause());
     
     repeatButton.addEventListener('click', () => {
       this.isRepeating = !this.isRepeating;
@@ -160,6 +161,7 @@ class QuickTime {
     if (!this.isPlayerReady) return;
 
     const playPauseButton = this.win.querySelector('.play-pause-button');
+    const videoOverlay = this.win.querySelector('.video-overlay');
     
     if (event.data === window.YT.PlayerState.PLAYING) {
       this.isPlaying = true;
@@ -167,6 +169,7 @@ class QuickTime {
         playPauseButton.textContent = '❚❚';
         playPauseButton.classList.add('playing');
       }
+      if (videoOverlay) videoOverlay.style.display = 'none';
       this._updateVideoInfo();
     } else if (event.data === window.YT.PlayerState.PAUSED) {
       this.isPlaying = false;
@@ -174,10 +177,13 @@ class QuickTime {
         playPauseButton.textContent = '▶';
         playPauseButton.classList.remove('playing');
       }
+      if (videoOverlay) videoOverlay.style.display = 'block';
     } else if (event.data === window.YT.PlayerState.ENDED) {
       if (this.isRepeating) {
         this.player.seekTo(0);
         this.player.playVideo();
+      } else {
+        if (videoOverlay) videoOverlay.style.display = 'block';
       }
     }
   }

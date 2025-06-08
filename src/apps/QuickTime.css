@@ -47,6 +47,7 @@
     flex-grow: 1;
     background: #000;
     min-height: 0; /* Prevent flexbox overflow */
+    position: relative; /* Add position relative for the overlay */
 }
 
 /* --- Controls Panel --- */
@@ -192,4 +193,14 @@
 #youtube-player {
     width: 100%;
     height: 100%;
+}
+
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    cursor: pointer;
 }
