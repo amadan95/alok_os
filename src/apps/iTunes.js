@@ -4,7 +4,7 @@ import './iTunes.css';
 class iTunes {
   constructor() {
     this.name = 'iTunes';
-    this.icon = new URL('../../assets/icons/iTunes.png', import.meta.url).href;
+    this.icon = '/iTunes.png';
   }
 
   launch() {

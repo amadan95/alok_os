@@ -3,7 +3,7 @@ import WindowManager from '../WindowManager';
 class TextEdit {
   constructor() {
     this.name = 'TextEdit';
-    this.icon = new URL('../../assets/icons/TextEdit.png', import.meta.url).href;
+    this.icon = '/TextEdit.png';
   }
 
   launch() {

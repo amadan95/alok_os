@@ -90,7 +90,7 @@ class iPod {
   renderNowPlaying() {
     const song = this.playlist[this.currentIndex] || { title: 'No Music Found', artist: '', album: '' };
     // Always fallback to iPod icon since we are not using album art
-    const albumArtUrl = new URL('../../../assets/icons/ipod.png', import.meta.url).href;
+    const albumArtUrl = '/ipod.png';
     
     return `
       <div class="screen-header">

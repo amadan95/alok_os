@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "start": "kill-port 3001 && kill-port 5173 && concurrently \"npm:dev\" \"npm:proxy\"",
-    "build": "vite build",
+    "build": "vite build && cp -r public/* dist/",
     "preview": "vite preview",
     "proxy": "nodemon --config nodemon.json proxy-server.cjs",
     "proxy:stop": "pkill -f 'node proxy-server.cjs'",

@@ -11,10 +11,10 @@ import QuickTime from './apps/QuickTime';
 import iPod from './apps/iPod';
 
 // Import icons
-import photosIcon from './assets/icons/Film Cannister from Photoroom.png';
-import moviesIcon from './assets/icons/Photoroom VHS.png';
-import ipodIcon from './assets/icons/iPod Image from Photoroom.png';
-import safariIcon from './assets/icons/Safari Icon from Photoroom.png';
+const photosIcon = '/Film Cannister from Photoroom.png';
+const moviesIcon = '/Photoroom VHS.png';
+const ipodIcon = '/iPod Image from Photoroom.png';
+const safariIcon = '/Safari Icon from Photoroom.png';
 
 /*
 Dock.addApplication({

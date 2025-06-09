@@ -4,7 +4,7 @@ import './QuickTime.css';
 class QuickTime {
   constructor() {
     this.name = 'Movies';
-    this.icon = new URL('../../assets/icons/QuickTime.png', import.meta.url).href;
+    this.icon = '/QuickTime.png';
     this.player = null;
     this.isPlaying = false;
     this.isPlayerReady = false;

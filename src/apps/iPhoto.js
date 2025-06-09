@@ -4,7 +4,7 @@ import './iPhoto.css';
 class iPhoto {
   constructor() {
     this.name = 'Photos';
-    this.icon = new URL('../../assets/icons/iPhoto.png', import.meta.url).href;
+    this.icon = '/iPhoto.png';
   }
 
   launch() {
