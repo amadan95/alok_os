@@ -11,10 +11,10 @@ import QuickTime from './apps/QuickTime';
 import iPod from './apps/iPod';
 
 // Import icons
-const photosIcon = '/Film Cannister from Photoroom.png';
-const moviesIcon = '/Photoroom VHS.png';
-const ipodIcon = '/iPod Image from Photoroom.png';
-const safariIcon = '/Safari Icon from Photoroom.png';
+const photosIcon = '/icons/Film-Cannister-from-Photoroom.png';
+const moviesIcon = '/icons/Photoroom-VHS.png';
+const ipodIcon = '/icons/iPod-Image-from-Photoroom.png';
+const safariIcon = '/icons/Safari-Icon-from-Photoroom.png';
 
 /*
 Dock.addApplication({
@@ -31,7 +31,7 @@ Dock.addApplication({
 
 Dock.addApplication({
   name: 'PaintBrush',
-  icon: '/icons/Microsoft Paint PNG.png',
+  icon: '/icons/Microsoft-Paint-PNG.png',
   action: () => PaintBrush.launch()
 });
 */

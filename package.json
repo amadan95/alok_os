@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "start": "kill-port 3001 && kill-port 5173 && concurrently \"npm:dev\" \"npm:proxy\"",
-    "build": "vite build && cp -r public/Calculette.png public/\"Film Cannister from Photoroom.png\" public/\"Microsoft Paint PNG.png\" public/\"Photoroom VHS.png\" public/QuickTime.png public/\"Safari Icon from Photoroom.png\" public/Safari.png public/TextEdit.png public/iPhoto.png public/\"iPod Image from Photoroom.png\" public/iTunes.png public/ipod.png dist/",
+    "build": "vite build",
     "preview": "vite preview",
     "proxy": "nodemon --config nodemon.json proxy-server.cjs",
     "proxy:stop": "pkill -f 'node proxy-server.cjs'",
