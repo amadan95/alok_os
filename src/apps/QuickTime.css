@@ -1,193 +1,28 @@
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
-/* --- Main VHS Theme --- */
-.quicktime-app.vhs-theme {
-    background: #1a1a1a;
+/* --- Main TE Theme --- */
+.quicktime-app.te-theme {
+    background-color: #EAEAEA;
+    border: 1px solid #CCCCCC;
     display: flex;
     flex-direction: column;
-    font-family: 'VT323', monospace;
-    color: #33ff33; /* Classic green terminal color */
-    border-radius: inherit;
-    overflow: hidden;
     height: 100%;
-}
-
-.window.quicktime-app-window,
-.window.quicktime-app-window .window-body {
-    background: transparent;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .window.quicktime-window .window-body {
-    padding: 40px; /* More padding for the QuickTime glass pane */
+    padding: 20px;
+    background: transparent;
 }
 
-.vhs-top-panel {
-    background: #2a2a2a;
-    padding: 10px;
-    border-bottom: 2px solid #111;
-    box-shadow: inset 0 -2px 5px rgba(0,0,0,0.4);
-    flex-shrink: 0;
-}
-
-.vhs-bottom-panel {
-    background: #2a2a2a;
-    padding: 10px;
-    border-top: 2px solid #111;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.4);
-    flex-shrink: 0;
-}
-
-.vhs-controls-wrapper {
-    display: flex;
-    flex-direction: column;
-    width: 100%; /* Take full width of the centered panel */
-}
-
+/* --- Video Container --- */
 .video-container {
     flex-grow: 1;
     background: #000;
-    min-height: 0; /* Prevent flexbox overflow */
-    position: relative; /* Add position relative for the overlay */
-}
-
-/* --- Controls Panel --- */
-.vhs-controls-panel {
-    background: #2a2a2a;
-    padding: 10px;
-    border-top: 2px solid #111;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.4);
-}
-
-/* --- Digital Screen --- */
-.vhs-screen {
-    background: #0A0A0A;
-    border: 2px solid #111;
-    border-radius: 4px;
-    padding: 8px;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
     position: relative;
+    border-radius: 6px;
     overflow: hidden;
-}
-
-/* Screen Scanlines Effect */
-.vhs-screen::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to bottom, rgba(20,20,20,0) 50%, rgba(0,0,0,0.4) 50%);
-    background-size: 100% 4px;
-    z-index: 1;
-    pointer-events: none;
-    opacity: 0.5;
-}
-
-.vhs-screen-top-labels,
-.vhs-screen-bottom-display {
-    display: grid;
-    grid-template-columns: 80px 100px 1fr;
-    gap: 10px;
-    align-items: center;
-}
-
-.vhs-screen-top-labels {
-    font-size: 16px;
-    opacity: 0.7;
-    padding-bottom: 4px;
-    border-bottom: 1px solid #33ff3330;
-}
-
-.vhs-screen-bottom-display {
-    font-size: 24px;
-    text-shadow: 0 0 5px #33ff33, 0 0 10px #33ff3360;
-}
-
-.vhs-screen-bottom-display .time-display {
-    font-size: 24px; /* Match other display elements */
-    color: #33ff33; /* Use green color */
-}
-
-/* --- Progress Bar --- */
-.progress-bar-container {
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    padding: 0;
-    margin-bottom: 10px;
-    cursor: pointer;
-}
-
-.progress-bar {
-    width: 0%;
-    height: 12px;
-    background: #33ff33;
-    border-radius: 2px;
-    box-shadow: 0 0 5px #33ff33, 0 0 10px #33ff3360;
-    transition: width 0.25s linear;
-}
-
-/* --- Scrolling Title --- */
-.title-container {
-    overflow: hidden;
-    white-space: nowrap;
-}
-
-.title-display.scrolling {
-    display: inline-block;
-    animation: scroll-text 15s linear infinite;
-}
-
-@keyframes scroll-text {
-    from { transform: translateX(100%); }
-    to { transform: translateX(-100%); }
-}
-
-/* --- Buttons --- */
-.vhs-buttons-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.vhs-button {
-    background: linear-gradient(to bottom, #5a5a5a, #3a3a3a);
-    border: 2px solid #1a1a1a;
-    border-radius: 4px;
-    color: #ddd;
-    font-family: 'VT323', monospace;
-    cursor: pointer;
-    box-shadow: 
-        inset 0 1px 1px #777777,
-        0 3px 0 #111;
-    transition: all 0.1s ease-out;
-    position: relative;
-}
-
-.vhs-button:active {
-    transform: translateY(2px);
-    box-shadow: inset 0 1px 1px #777777, 0 1px 0 #111;
-}
-
-.vhs-main-controls .vhs-button {
-    font-size: 20px;
-    padding: 8px 16px;
-}
-
-.vhs-secondary-controls {
-    display: flex;
-    gap: 8px;
-}
-
-.vhs-secondary-controls .vhs-button {
-    font-size: 14px;
-    padding: 6px 10px;
-}
-
-.vhs-secondary-controls .vhs-button.active {
-    background: linear-gradient(to bottom, #ff5a5a, #dd3a3a);
-    color: white;
 }
 
 #youtube-player {
@@ -201,6 +36,166 @@
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 10;
+    z-index: 9999;
     cursor: pointer;
+    background: rgba(0,0,0,0.1);
+    transition: background 0.3s ease;
+}
+
+/* --- Controls Panel --- */
+.te-controls-panel {
+    background: #d9d9d9;
+    background-image: linear-gradient(to bottom, #e3e3e3, #cccccc);
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 8px;
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.8), 0 2px 3px rgba(0,0,0,0.3);
+    border: 1px solid #aaa;
+    flex-shrink: 0;
+}
+
+/* --- Progress Bar --- */
+.te-progress-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.te-time-current, .te-time-total {
+    font-family: 'VT323', monospace;
+    font-size: 24px;
+    color: #333;
+}
+
+.te-progress-bar {
+    flex-grow: 1;
+    height: 20px;
+    background-color: #333;
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    background-image: repeating-linear-gradient(to right, #444, #444 1px, transparent 1px, transparent 4px);
+}
+
+.te-progress-bar-filled {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    background-color: #f0f0f0;
+    border-radius: 2px;
+    background-image: repeating-linear-gradient(to right, #fff, #fff 1px, transparent 1px, transparent 4px);
+    transition: width 0.25s linear;
+}
+
+/* --- Buttons --- */
+.te-buttons-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.te-button-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.te-button {
+    width: 50px;
+    height: 50px;
+    background: #222;
+    border: 2px solid #111;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: #ccc;
+    box-shadow: 
+        inset 0 1px 1px rgba(255,255,255,0.1),
+        0 4px 5px rgba(0,0,0,0.4);
+    transition: all 0.1s ease-out;
+    position: relative; /* Needed for :active psuedo-class */
+}
+
+.te-button:active {
+    transform: translateY(2px);
+    box-shadow: 
+        inset 0 1px 1px rgba(255,255,255,0.1),
+        0 2px 3px rgba(0,0,0,0.5);
+}
+
+.te-button.te-play-btn {
+    background: #3a3a3a;
+    font-family: 'Helvetica', sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+    color: #fff;
+}
+
+.te-button svg {
+    stroke: #ccc;
+}
+
+/* --- Indicator Lights --- */
+.te-indicator-light-container {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    height: 10px; /* Reserve space for lights */
+}
+
+.te-indicator-light {
+    width: 6px;
+    height: 6px;
+    background: #b0b0b0; /* Off state */
+    border-radius: 50%;
+    border: 1px solid #999;
+}
+
+.te-indicator-light.active,
+.te-play-light.active {
+    background: #ff4141; /* Lit state */
+    border: 1px solid #d43535;
+    box-shadow: 0 0 5px #ff4141, 0 0 8px #ff4141;
+}
+
+.te-top-panel {
+    padding: 8px;
+    background-color: #DADADA;
+    border-bottom: 1px solid #CCCCCC;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.te-screen-display {
+    background-color: #C1C1C1;
+    border: 1px solid #B0B0B0;
+    padding: 4px 8px;
+    border-radius: 4px;
+    text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12px;
+    color: #333;
+    min-width: 150px;
+    box-shadow: inset 0 0 2px rgba(0,0,0,0.2);
+}
+
+.te-track {
+    display: block;
+}
+
+.te-title {
+    display: block;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

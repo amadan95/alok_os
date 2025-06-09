@@ -1,49 +1,144 @@
+/* Main container for the Safari app */
 .safari-app {
     display: flex;
     flex-direction: column;
     height: 100%;
-    background-color: #d6d6d6;
+    background-color: #f0f0f0; /* Light gray background */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
+/* Overall toolbar container */
+.safari-header {
+    flex-shrink: 0;
+}
+
+/* Top bar holding navigation and address bar */
 .safari-toolbar {
     display: flex;
     align-items: center;
-    padding: 5px;
+    padding: 6px 8px;
     background: linear-gradient(to bottom, #e4e4e4, #c8c8c8);
     border-bottom: 1px solid #7a7a7a;
 }
 
-.navigation-buttons button {
+.nav-buttons button {
     background: none;
     border: 1px solid #999;
     border-radius: 4px;
-    padding: 2px 8px;
+    padding: 3px 10px;
     margin-right: 5px;
+    font-size: 16px;
+    color: #333;
 }
 
+.nav-buttons button:disabled {
+    color: #aaa;
+}
+
+/* Address bar styling */
 .address-bar-container {
     flex-grow: 1;
-    padding: 2px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    margin: 0 8px;
     background-color: white;
     border: 1px solid #999;
-    border-radius: 15px;
+    border-radius: 5px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
 }
 
 .address-bar {
     width: 100%;
     border: none;
     outline: none;
+    padding: 5px 0;
     font-size: 14px;
-    background: white;
+    background: transparent;
 }
 
+/* Additional UI buttons */
+.action-buttons button {
+    background: none;
+    border: none;
+    font-size: 18px;
+    padding: 0 5px;
+    color: #333;
+}
+
+/* Tab bar container */
+.tab-bar {
+    display: flex;
+    background-color: #b4b4b4;
+    padding: 5px 5px 0 5px;
+    border-bottom: 1px solid #7a7a7a;
+}
+
+.tab {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    margin-right: 1px;
+    border: 1px solid #7a7a7a;
+    border-bottom: none;
+    border-radius: 5px 5px 0 0;
+    background: linear-gradient(to bottom, #dcdcdc, #c0c0c0);
+    position: relative;
+    max-width: 200px;
+}
+
+.tab.active {
+    background: linear-gradient(to bottom, #f0f0f0, #e0e0e0);
+    z-index: 2;
+}
+
+.tab-favicon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+}
+
+.tab-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-grow: 1;
+}
+
+.close-tab-btn {
+    background: none;
+    border: none;
+    font-size: 14px;
+    margin-left: 8px;
+    padding: 0 4px;
+    color: #666;
+}
+
+.new-tab-btn {
+    padding: 5px 10px;
+    border: 1px solid #7a7a7a;
+    border-radius: 5px 5px 0 0;
+    margin-left: 5px;
+    background: linear-gradient(to bottom, #dcdcdc, #c0c0c0);
+}
+
+/* Main content area where the iframe lives */
 .safari-content {
     flex-grow: 1;
-    display: flex;
+    position: relative;
+    background-color: #fff;
 }
 
 .browser-frame {
     width: 100%;
     height: 100%;
     border: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* Hide inactive iframes */
+.browser-frame:not(.active) {
+    visibility: hidden;
 } 

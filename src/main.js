@@ -20,51 +20,51 @@ const safariIcon = '/icons/Safari-Icon-from-Photoroom.png';
 Dock.addApplication({
   name: 'TextEdit',
   icon: '/icons/TextEdit.png',
-  action: () => TextEdit.launch()
+  action: () => new TextEdit().launch()
 });
 
 Dock.addApplication({
   name: 'Calculator',
   icon: '/icons/Calculette.png',
-  action: () => Calculator.launch()
+  action: () => new Calculator().launch()
 });
 
 Dock.addApplication({
   name: 'PaintBrush',
   icon: '/icons/Microsoft-Paint-PNG.png',
-  action: () => PaintBrush.launch()
+  action: () => new PaintBrush().launch()
 });
 */
 
 Dock.addApplication({
   name: 'Photos',
   icon: photosIcon,
-  action: () => iPhoto.launch()
+  action: () => new iPhoto().launch()
 });
 
 Dock.addApplication({
   name: 'Movies',
   icon: moviesIcon,
-  action: () => QuickTime.launch()
+  action: () => new QuickTime().launch()
 });
 
 Dock.addApplication({
   name: 'iPod',
   icon: ipodIcon,
-  action: () => iPod.launch()
+  action: () => new iPod().launch()
 });
 
 Dock.addApplication({
   name: 'Safari',
   icon: safariIcon,
-  action: () => Safari.launch()
+  action: () => new Safari().launch()
 });
 
 /*
 Dock.addApplication({
   name: 'iTunes',
   icon: '/icons/iTunes.png',
-  action: () => iTunes.launch()
+  action: () => new iTunes().launch()
 });
 */
 
