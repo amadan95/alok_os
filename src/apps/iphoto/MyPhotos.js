@@ -9,4 +9,4 @@ export const myEvents = [
   }
 ];
 
-export const myPhotos = photoFiles.map(photo => `/media/photos/${photo}`); 
+export const myPhotos = photoFiles.map(photo => `/aurora.jpg`); // Using placeholder image for now 

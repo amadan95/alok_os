@@ -5,7 +5,7 @@ class iPod {
   constructor() {
     this.name = 'iPod';
     this.audio = new Audio();
-    this.clickSound = new Audio('/media/click.mp3'); // Load click sound
+    this.clickSound = new Audio('/sounds/click.mp3'); // Load click sound
     this.playlist = [];
     this.currentIndex = 0;
     this.currentView = 'nowPlaying'; // Can be 'menu' or 'nowPlaying'
