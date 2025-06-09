@@ -3,7 +3,7 @@ import WindowManager from '../WindowManager';
 class Calculator {
   constructor() {
     this.name = 'Calculator';
-    this.icon = '/icons/calculator.png'; // Assuming icon will be placed here
+    this.icon = '../public/icons/Calculette.png';
   }
 
   launch() {

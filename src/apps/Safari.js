@@ -4,6 +4,7 @@ import './Safari.css';
 class Safari {
   constructor() {
     this.name = 'Safari';
+    this.icon = '../public/icons/Safari.png';
   }
 
   launch() {

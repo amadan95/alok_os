@@ -4,6 +4,7 @@ import './iPhoto.css';
 class iPhoto {
   constructor() {
     this.name = 'Photos';
+    this.icon = '../public/icons/iPhoto.png';
   }
 
   launch() {

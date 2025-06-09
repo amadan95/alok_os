@@ -3,6 +3,7 @@ import WindowManager from '../WindowManager';
 class PaintBrush {
   constructor() {
     this.name = 'PaintBrush';
+    this.icon = '../public/icons/Microsoft Paint PNG.png';
     this.placeholderClass = 'paintbrush-placeholder';
   }
 

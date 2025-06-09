@@ -4,6 +4,7 @@ import './iTunes.css';
 class iTunes {
   constructor() {
     this.name = 'iTunes';
+    this.icon = '../public/icons/iTunes.png';
   }
 
   launch() {
