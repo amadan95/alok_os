@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "proxy": "nodemon --config nodemon.json proxy-server.cjs",
     "proxy:stop": "pkill -f 'node proxy-server.cjs'",
-    "proxy:debug": "nodemon --config nodemon.json --inspect proxy-server.cjs"
+    "proxy:debug": "nodemon --config nodemon.json --inspect proxy-server.cjs",
+    "vercel-build": "npm run build"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.21",
