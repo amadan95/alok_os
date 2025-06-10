@@ -255,4 +255,4 @@ class QuickTime {
   }
 }
 
-export default new QuickTime(); 
+export default QuickTime; 

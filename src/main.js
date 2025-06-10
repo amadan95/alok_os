@@ -45,7 +45,7 @@ Dock.addApplication({
 Dock.addApplication({
   name: 'Movies',
   icon: moviesIcon,
-  action: () => new QuickTime().launch()
+  action: () => QuickTime.launch()
 });
 
 Dock.addApplication({
