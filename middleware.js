@@ -43,6 +43,7 @@ async function handleRequest(request) {
   const headers = new Headers(res.headers);
   headers.delete('X-Frame-Options');
   headers.delete('Content-Security-Policy');
+  headers.delete('Permissions-Policy');
 
   // Use HTMLRewriter to rewrite links on the fly
   const rewriter = new HTMLRewriter();

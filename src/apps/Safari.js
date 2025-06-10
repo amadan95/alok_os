@@ -78,7 +78,7 @@ class Safari {
     const iframe = document.createElement('iframe');
     iframe.className = 'browser-frame';
     iframe.sandbox = "allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation allow-modals";
-    iframe.src = url === 'about:blank' ? url : `/proxy/${url}`;
+    iframe.src = url === 'about:blank' ? url : `/proxy/${encodeURIComponent(url)}`;
 
     const tabElement = document.createElement('div');
     tabElement.className = 'tab';
@@ -166,7 +166,7 @@ class Safari {
     const tab = this.tabs.get(this.activeTabId);
     if (!tab) return;
     
-    const proxiedUrl = targetUrl.startsWith('about:') ? targetUrl : `/proxy/${targetUrl}`;
+    const proxiedUrl = targetUrl.startsWith('about:') ? targetUrl : `/proxy/${encodeURIComponent(targetUrl)}`;
     tab.iframe.src = proxiedUrl;
     
     // Update history
@@ -186,7 +186,7 @@ class Safari {
     
     let displayUrl = tab.history[tab.historyIndex] || '';
     if (displayUrl.startsWith('/proxy/')) {
-        displayUrl = displayUrl.substring(7); // remove '/proxy/'
+        displayUrl = decodeURIComponent(displayUrl.substring(7)); // remove '/proxy/' and decode
     }
     // Ensure we only show the clean URL
     addressBar.value = displayUrl.split('#')[0];
@@ -206,34 +206,36 @@ class Safari {
 
     try {
       const newTitle = tab.iframe.contentWindow.document.title || 'Untitled';
-      tab.title = newTitle;
+      if (newTitle && newTitle !== tab.title) {
+        tab.title = newTitle;
+        this.updateTitles(tab);
+      }
     } catch (e) {
       // Cross-origin iframe, title cannot be accessed.
       // We will use the URL as a fallback.
       let url = tab.history[tab.historyIndex] || '';
-      if (url.startsWith('/proxy/')) url = url.substring(7);
-      tab.title = url.split('/')[2] || 'Untitled Page';
+      if (url.startsWith('/proxy/')) url = decodeURIComponent(url.substring(7));
+      const newTitle = url.split('/')[2] || 'Untitled Page';
+      if (newTitle !== tab.title) {
+        tab.title = newTitle;
+        this.updateTitles(tab);
+      }
     }
+  }
 
-    this.updateUIForActiveTab();
+  // Helper to update titles consistently
+  updateTitles(tab) {
+    tab.element.querySelector('.tab-title').textContent = tab.title;
+    const titleElement = this.win.querySelector('.window-title');
+    if (titleElement) {
+        titleElement.textContent = `Safari - ${tab.title}`;
+    }
   }
 
   // Iframe load handler
   onIframeLoad(tabId) {
     const tab = this.tabs.get(tabId);
     if(!tab) return;
-
-    try {
-      const newTitle = tab.iframe.contentWindow.document.title || 'Untitled';
-      tab.title = newTitle;
-    } catch (e) {
-      // Cross-origin iframe, title cannot be accessed.
-      // We will use the URL as a fallback.
-      let url = tab.history[tab.historyIndex] || '';
-      if (url.startsWith('/proxy/')) url = url.substring(7);
-      tab.title = url.split('/')[2] || 'Untitled Page';
-    }
-
     this.updateUIForActiveTab();
   }
 

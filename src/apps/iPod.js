@@ -333,9 +333,10 @@ class iPod {
   }
 
   endDrag() {
-    this.isDragging = false;
-    this.rotationAccumulator = 0;
+    if (this.isDragging) {
+      this.isDragging = false;
+    }
   }
 }
 
-export default new iPod(); 
+export default iPod; 
