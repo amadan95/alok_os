@@ -1,10 +1,10 @@
 export const config = {
-  matcher: '/proxy/:path*',
+  matcher: '/proxy',
 };
 
 async function handleRequest(request) {
-  const url = new URL(request.url);
-  const targetUrlString = url.pathname.substring('/proxy/'.length);
+  const { searchParams } = new URL(request.url);
+  const targetUrlString = searchParams.get('url');
 
   if (!targetUrlString) {
     return new Response('Invalid URL', { status: 400 });
@@ -12,7 +12,7 @@ async function handleRequest(request) {
 
   let targetUrl;
   try {
-    targetUrl = new URL(decodeURIComponent(targetUrlString));
+    targetUrl = new URL(targetUrlString);
   } catch (e) {
     return new Response('Invalid URL format', { status: 400 });
   }
@@ -30,11 +30,14 @@ async function handleRequest(request) {
   // Handle redirects
   if (res.status >= 300 && res.status < 400 && res.headers.has('location')) {
     const redirectUrl = new URL(res.headers.get('location'), targetUrl).href;
-    // Return a standard Response object for redirection
+    const newLocation = new URL(request.url);
+    newLocation.pathname = '/proxy';
+    newLocation.search = `?url=${encodeURIComponent(redirectUrl)}`;
+
     return new Response(null, {
       status: 302,
       headers: {
-        'Location': new URL(`/proxy/${redirectUrl}`, request.url).toString(),
+        'Location': newLocation.toString(),
       },
     });
   }
@@ -53,7 +56,7 @@ async function handleRequest(request) {
     if (url) {
       try {
         const absoluteUrl = new URL(url, targetUrl).href;
-        element.setAttribute(attribute, `/proxy/${absoluteUrl}`);
+        element.setAttribute(attribute, `/proxy?url=${encodeURIComponent(absoluteUrl)}`);
       } catch (e) {
         // Ignore invalid URLs
       }
