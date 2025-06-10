@@ -1,5 +1,5 @@
 export const config = {
-  matcher: '/proxy',
+  matcher: '/proxy/',
 };
 
 async function handleRequest(request) {
@@ -31,7 +31,7 @@ async function handleRequest(request) {
   if (res.status >= 300 && res.status < 400 && res.headers.has('location')) {
     const redirectUrl = new URL(res.headers.get('location'), targetUrl).href;
     const newLocation = new URL(request.url);
-    newLocation.pathname = '/proxy';
+    newLocation.pathname = '/proxy/';
     newLocation.search = `?url=${encodeURIComponent(redirectUrl)}`;
 
     return new Response(null, {
@@ -56,7 +56,7 @@ async function handleRequest(request) {
     if (url) {
       try {
         const absoluteUrl = new URL(url, targetUrl).href;
-        element.setAttribute(attribute, `/proxy?url=${encodeURIComponent(absoluteUrl)}`);
+        element.setAttribute(attribute, `/proxy/?url=${encodeURIComponent(absoluteUrl)}`);
       } catch (e) {
         // Ignore invalid URLs
       }
