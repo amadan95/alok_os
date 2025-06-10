@@ -39,25 +39,37 @@ Dock.addApplication({
 Dock.addApplication({
   name: 'Photos',
   icon: photosIcon,
-  action: () => new iPhoto().launch()
+  action: () => {
+    const app = typeof iPhoto === 'function' ? new iPhoto() : iPhoto;
+    app.launch();
+  }
 });
 
 Dock.addApplication({
   name: 'Movies',
   icon: moviesIcon,
-  action: () => QuickTime.launch()
+  action: () => {
+    const app = typeof QuickTime === 'function' ? new QuickTime() : QuickTime;
+    app.launch();
+  }
 });
 
 Dock.addApplication({
   name: 'iPod',
   icon: ipodIcon,
-  action: () => new iPod().launch()
+  action: () => {
+    const app = typeof iPod === 'function' ? new iPod() : iPod;
+    app.launch();
+  }
 });
 
 Dock.addApplication({
   name: 'Safari',
   icon: safariIcon,
-  action: () => new Safari().launch()
+  action: () => {
+    const app = typeof Safari === 'function' ? new Safari() : Safari;
+    app.launch();
+  }
 });
 
 /*
