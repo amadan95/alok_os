@@ -1,5 +1,3 @@
-import { NextRequest, NextResponse } from 'next/server';
-
 export const config = {
   matcher: '/proxy/:path*',
 };
@@ -32,7 +30,13 @@ async function handleRequest(request) {
   // Handle redirects
   if (res.status >= 300 && res.status < 400 && res.headers.has('location')) {
     const redirectUrl = new URL(res.headers.get('location'), targetUrl).href;
-    return NextResponse.redirect(new URL(`/proxy/${redirectUrl}`, request.url), { status: 302 });
+    // Return a standard Response object for redirection
+    return new Response(null, {
+      status: 302,
+      headers: {
+        'Location': new URL(`/proxy/${redirectUrl}`, request.url).toString(),
+      },
+    });
   }
   
   // Create new headers, stripping security headers
