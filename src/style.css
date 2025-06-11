@@ -444,3 +444,8 @@ body, html {
 .window-title-bar-button.close:hover {
   background-color: #ff5f57;
 }
+
+/* Padding for time display in menu bar */
+#date-time {
+    padding-left: 12px;
+}
