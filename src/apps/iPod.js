@@ -105,7 +105,7 @@ class iPod {
       <div class="screen-header">
         <span class="pause-icon">${this.isPlaying ? '||' : '▶'}</span>
         <span class="now-playing-title">Now Playing</span>
-        <span class="battery-icon">🔋</span>
+        <div class="battery-icon"></div>
       </div>
       <div class="now-playing-view">
         <div class="track-info">
