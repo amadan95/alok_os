@@ -110,8 +110,8 @@ class iPod {
       <div class="now-playing-view">
         <div class="track-info">
             <p class="track-title">${song.title}</p>
-            <p class="track-artist">${song.artist}</p>
             <p class="track-album">${song.album}</p>
+            <p class="track-artist">${song.artist}</p>
         </div>
       </div>
       <div class="progress-bar-container">
