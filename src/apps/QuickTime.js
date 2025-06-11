@@ -35,6 +35,7 @@ class QuickTime {
             </div>
             <span class="te-time-total">00:00</span>
           </div>
+
           <div class="te-buttons-container">
             <div class="te-button-group">
               <button class="te-button" id="te-shuffle-btn" title="Shuffle">
@@ -82,8 +83,8 @@ class QuickTime {
 
     this.win = WindowManager.createWindow({
       title: 'Movies',
-      width: '640px',
-      height: '480px',
+      width: '1280px',
+      height: '960px',
       content: content,
       className: 'quicktime-window'
     });
