@@ -13,8 +13,17 @@ class iPod {
       // Remove extension and convert underscores to spaces for readability
       const cleanName = file.replace(/\.mp3$/i, '').replace(/_/g, ' ');
 
-      // Expect pattern: "Song Title-Artist-Album" – split on hyphens
-      const [rawTitle = '', rawArtist = '', rawAlbum = ''] = cleanName.split('-').map(part => part.trim());
+      // Expect pattern: "Song Title-Artist-Album" or with spaces around dash
+      const parts = cleanName.split(/\s*-\s*/).map(p => p.trim()).filter(Boolean);
+
+      let rawTitle = cleanName, rawArtist = '', rawAlbum = '';
+      if (parts.length === 3) {
+        [rawTitle, rawArtist, rawAlbum] = parts;
+      } else if (parts.length === 2) {
+        [rawTitle, rawArtist] = parts;
+      } else {
+        rawTitle = parts[0] || cleanName;
+      }
 
       return {
         title: rawTitle || cleanName,
