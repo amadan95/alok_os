@@ -10,9 +10,20 @@ class iPod {
     const tracks = import.meta.glob('../music/*.mp3', { eager: true, import: 'default', query: '?url' });
     this.playlist = Object.entries(tracks).map(([path, url]) => {
       const file = path.split('/').pop();
-      const title = file.replace(/\.mp3$/i, '').replace(/_/g, ' ');
-      return { title, artist: '', src: url };
+      // Remove extension and convert underscores to spaces for readability
+      const cleanName = file.replace(/\.mp3$/i, '').replace(/_/g, ' ');
+
+      // Expect pattern: "Song Title-Artist-Album" – split on hyphens
+      const [rawTitle = '', rawArtist = '', rawAlbum = ''] = cleanName.split('-').map(part => part.trim());
+
+      return {
+        title: rawTitle || cleanName,
+        artist: rawArtist,
+        album: rawAlbum,
+        src: url,
+      };
     });
+    this.shufflePlaylist();
     this.currentIndex = 0;
     this.currentView = 'nowPlaying'; // Can be 'menu' or 'nowPlaying'
     this.menuItems = ['Now Playing', 'Music', 'Settings'];
@@ -91,6 +102,7 @@ class iPod {
         <div class="track-info">
             <p class="track-title">${song.title}</p>
             <p class="track-artist">${song.artist}</p>
+            <p class="track-album">${song.album}</p>
         </div>
       </div>
       <div class="progress-bar-container">
@@ -137,6 +149,8 @@ class iPod {
       this.win.addEventListener('mouseup', () => this.endDrag());
       this.win.addEventListener('mouseleave', () => this.endDrag());
     }
+
+    this.attachProgressListeners();
   }
     
   playClickSound() {
@@ -261,7 +275,7 @@ class iPod {
 
       if (titleEl) titleEl.textContent = song.title;
       if (artistEl) artistEl.textContent = song.artist;
-      if (albumEl) albumEl.textContent = '';
+      if (albumEl) albumEl.textContent = song.album;
       if (pauseIcon) pauseIcon.textContent = this.isPlaying ? '||' : '▶';
     } else if (this.currentView === 'menu') {
        this.win.querySelectorAll('.ipod-menu li').forEach((item, index) => {
@@ -321,6 +335,35 @@ class iPod {
     if (this.isDragging) {
       this.isDragging = false;
     }
+  }
+
+  shufflePlaylist() {
+    for (let i = this.playlist.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [this.playlist[i], this.playlist[j]] = [this.playlist[j], this.playlist[i]];
+    }
+  }
+
+  attachProgressListeners() {
+    const container = this.win.querySelector('.progress-bar-container');
+    if (!container) return;
+
+    const seek = (e) => {
+      const rect = container.getBoundingClientRect();
+      const percent = Math.min(Math.max(0, (e.clientX - rect.left) / rect.width), 1);
+      if (this.audio.duration) {
+        this.audio.currentTime = percent * this.audio.duration;
+        this.updateProgress();
+      }
+    };
+
+    container.addEventListener('click', seek);
+
+    // optional drag seek
+    let seeking = false;
+    container.addEventListener('mousedown', (e)=>{ seeking=true; seek(e); });
+    window.addEventListener('mousemove', (e)=>{ if(seeking) seek(e); });
+    window.addEventListener('mouseup', ()=>{ seeking=false; });
   }
 }
 

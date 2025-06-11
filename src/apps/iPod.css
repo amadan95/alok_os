@@ -65,6 +65,7 @@
     flex-direction: column;
     overflow: hidden;
     position: relative;
+    padding-bottom: 12px; /* Provide space below the progress bar/time info */
 }
 
 .screen-header {
@@ -169,12 +170,14 @@
 /* Progress Bar */
 .progress-bar-container {
     height: 8px;
+    width: calc(100% - 10px); /* nearly full width */
     background: #ccc;
     border-radius: 4px;
     overflow: hidden;
-    margin: 10px 10px 5px 10px;
+    margin: 10px 5px 5px 5px;
     border: 1px solid #999;
     box-shadow: inset 0 1px 1px rgba(0,0,0,0.2);
+    cursor: pointer;
 }
 
 .progress-bar-filled {
