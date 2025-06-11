@@ -6,20 +6,28 @@ class iPod {
     this.name = 'iPod';
     this.audio = new Audio();
     this.clickSound = new Audio('/sounds/click.mp3'); // Load click sound
-    this.playlist = [];
+    // Dynamically import every mp3 under /src/music using Vite's glob import
+    const tracks = import.meta.glob('../music/*.mp3', { eager: true, import: 'default', query: '?url' });
+    this.playlist = Object.entries(tracks).map(([path, url]) => {
+      const file = path.split('/').pop();
+      const title = file.replace(/\.mp3$/i, '').replace(/_/g, ' ');
+      return { title, artist: '', src: url };
+    });
     this.currentIndex = 0;
     this.currentView = 'nowPlaying'; // Can be 'menu' or 'nowPlaying'
-    this.menuItems = ['Now Playing', 'Music', 'Photos', 'Videos', 'Settings'];
+    this.menuItems = ['Now Playing', 'Music', 'Settings'];
     this.activeMenuItem = 0;
     this.isPlaying = false;
     this.isDragging = false;
     this.lastAngle = 0;
     this.rotationAccumulator = 0; // Accumulates rotation
-    this.proxyUrl = (url) => `http://localhost:3001/?url=${encodeURIComponent(url)}`;
+
+    if (this.playlist.length === 0) {
+        console.warn('No MP3 files found in src/music. Please add files and restart.');
+    }
   }
 
   async launch() {
-    await this.fetchMusic();
     const content = this.render();
     this.win = WindowManager.createWindow({
       title: 'iPod',
@@ -30,24 +38,6 @@ class iPod {
     });
     this.addEventListeners();
     this.updateUI();
-  }
-
-  async fetchMusic() {
-    try {
-      const response = await fetch('http://localhost:3001/api/music');
-      const data = await response.json();
-      this.playlist = data.tracks;
-      
-      if (this.playlist.length > 0) {
-        console.log(`Loaded ${this.playlist.length} tracks from playlist "${data.playlistName}"`);
-      } else {
-        console.log('Playlist is empty.');
-      }
-      
-    } catch (error) {
-      console.error('Error fetching music:', error);
-      this.playlist = []; // Ensure playlist is empty on error
-    }
   }
 
   render() {
@@ -88,9 +78,8 @@ class iPod {
   }
 
   renderNowPlaying() {
-    const song = this.playlist[this.currentIndex] || { title: 'No Music Found', artist: '', album: '' };
+    const song = this.playlist[this.currentIndex] || { title: 'No Music Found', artist: '' };
     // Always fallback to iPod icon since we are not using album art
-    const albumArtUrl = '/ipod.png';
     
     return `
       <div class="screen-header">
@@ -102,10 +91,6 @@ class iPod {
         <div class="track-info">
             <p class="track-title">${song.title}</p>
             <p class="track-artist">${song.artist}</p>
-            <p class="track-album">${song.album}</p>
-        </div>
-        <div class="album-art">
-          <img src="${albumArtUrl}" alt="Album Art" crossorigin="anonymous">
         </div>
       </div>
       <div class="progress-bar-container">
@@ -204,8 +189,8 @@ class iPod {
     this.currentIndex = index;
     const song = this.playlist[index];
     if (song) {
-      if (song.previewUrl) {
-        this.audio.src = this.proxyUrl(song.previewUrl);
+      if (song.src) {
+        this.audio.src = song.src;
         this.audio.play().catch(e => console.error("Audio play failed:", e));
         this.isPlaying = true;
       } else {
@@ -276,7 +261,7 @@ class iPod {
 
       if (titleEl) titleEl.textContent = song.title;
       if (artistEl) artistEl.textContent = song.artist;
-      if (albumEl) albumEl.textContent = song.album;
+      if (albumEl) albumEl.textContent = '';
       if (pauseIcon) pauseIcon.textContent = this.isPlaying ? '||' : '▶';
     } else if (this.currentView === 'menu') {
        this.win.querySelectorAll('.ipod-menu li').forEach((item, index) => {

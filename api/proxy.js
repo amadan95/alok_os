@@ -26,8 +26,12 @@ export default async function handler(request) {
   }
 
   // Forward the request to the target URL
-  const outboundHeaders = new Headers(request.headers);
-  outboundHeaders.set('host', targetUrl.hostname);
+  const outboundHeaders = new Headers();
+  for (const [key, value] of request.headers.entries()) {
+    const lower = key.toLowerCase();
+    if (['host', 'connection', 'content-length'].includes(lower)) continue;
+    outboundHeaders.set(key, value);
+  }
   outboundHeaders.set('referer', targetUrl.origin);
 
   const upstreamResponse = await fetch(targetUrl.toString(), {
@@ -54,7 +58,11 @@ export default async function handler(request) {
 
   // For non-HTML we can stream through untouched
   const contentType = headers.get('content-type') || '';
-  if (!contentType.includes('text/html')) {
+
+  // If HTMLRewriter is not available in the edge runtime, fall back to streaming response untouched
+  const Rewriter = typeof HTMLRewriter !== 'undefined' ? HTMLRewriter : null;
+
+  if (!contentType.includes('text/html') || !Rewriter) {
     return new Response(upstreamResponse.body, {
       status: upstreamResponse.status,
       statusText: upstreamResponse.statusText,
@@ -63,7 +71,7 @@ export default async function handler(request) {
   }
 
   // For HTML, rewrite asset links so they also pass through the proxy
-  const rewriter = new HTMLRewriter();
+  const rewriter = new Rewriter();
   const rewrite = (attr) => (element) => {
     const value = element.getAttribute(attr);
     if (!value) return;
