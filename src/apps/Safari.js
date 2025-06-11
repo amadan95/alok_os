@@ -77,7 +77,7 @@ class Safari {
     const tabId = `tab-${Date.now()}`;
     const iframe = document.createElement('iframe');
     iframe.className = 'browser-frame';
-    iframe.sandbox = "allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation allow-modals";
+    iframe.sandbox = "allow-scripts allow-forms allow-popups allow-top-navigation allow-modals";
     iframe.src = url === 'about:blank' ? url : `/api/proxy?url=${encodeURIComponent(url)}`;
 
     const tabElement = document.createElement('div');
