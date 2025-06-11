@@ -47,7 +47,7 @@ class Safari {
 
     // Initial setup
     this.setupEventListeners();
-    this.createNewTab('https://www.google.com');
+    this.createNewTab('https://duckduckgo.com');
   }
 
   // Centralized event listener setup
@@ -62,7 +62,7 @@ class Safari {
     backBtn.addEventListener('click', () => this.goBack());
     forwardBtn.addEventListener('click', () => this.goForward());
     refreshBtn.addEventListener('click', () => this.reloadPage());
-    homeBtn.addEventListener('click', () => this.navigateTo('https://www.google.com'));
+    homeBtn.addEventListener('click', () => this.navigateTo('https://duckduckgo.com'));
     newTabBtn.addEventListener('click', () => this.createNewTab());
 
     addressBar.addEventListener('keydown', (e) => {
@@ -160,7 +160,7 @@ class Safari {
   navigateTo(url) {
     let targetUrl = url.trim();
     if (!/^(https?:\/\/|about:)/.test(targetUrl)) {
-      targetUrl = `https://www.google.com/search?q=${encodeURIComponent(targetUrl)}`;
+      targetUrl = `https://duckduckgo.com/?q=${encodeURIComponent(targetUrl)}`;
     }
     
     const tab = this.tabs.get(this.activeTabId);
