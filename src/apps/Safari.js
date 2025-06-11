@@ -78,7 +78,7 @@ class Safari {
     const iframe = document.createElement('iframe');
     iframe.className = 'browser-frame';
     iframe.sandbox = "allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation allow-modals";
-    iframe.src = url === 'about:blank' ? url : `/proxy/?url=${encodeURIComponent(url)}`;
+    iframe.src = url === 'about:blank' ? url : `/api/proxy?url=${encodeURIComponent(url)}`;
 
     const tabElement = document.createElement('div');
     tabElement.className = 'tab';
@@ -166,7 +166,7 @@ class Safari {
     const tab = this.tabs.get(this.activeTabId);
     if (!tab) return;
     
-    const proxiedUrl = targetUrl.startsWith('about:') ? targetUrl : `/proxy/?url=${encodeURIComponent(targetUrl)}`;
+    const proxiedUrl = targetUrl.startsWith('about:') ? targetUrl : `/api/proxy?url=${encodeURIComponent(targetUrl)}`;
     tab.iframe.src = proxiedUrl;
     
     // Update history
@@ -185,11 +185,10 @@ class Safari {
     const addressBar = this.win.querySelector('.address-bar');
     
     let displayUrl = tab.history[tab.historyIndex] || '';
-    if (displayUrl.startsWith('/proxy/?url=')) {
+    if (displayUrl.startsWith('/api/proxy?url=')) {
         try {
-            displayUrl = decodeURIComponent(displayUrl.substring('/proxy/?url='.length));
+            displayUrl = decodeURIComponent(displayUrl.substring('/api/proxy?url='.length));
         } catch (e) {
-            // Could be a malformed URL from history, fallback to blank
             displayUrl = '';
         }
     }
@@ -219,9 +218,9 @@ class Safari {
       // Cross-origin iframe, title cannot be accessed.
       // We will use the URL as a fallback.
       let url = tab.history[tab.historyIndex] || '';
-      if (url.startsWith('/proxy/?url=')) {
+      if (url.startsWith('/api/proxy?url=')) {
         try {
-          url = decodeURIComponent(url.substring('/proxy/?url='.length));
+          url = decodeURIComponent(url.substring('/api/proxy?url='.length));
         } catch(e) {
           url = '';
         }
