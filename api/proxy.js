@@ -26,12 +26,12 @@ export default async function handler(request) {
   }
 
   // Forward the request to the target URL
+  const outboundHeaders = new Headers(request.headers);
+  outboundHeaders.set('host', targetUrl.hostname);
+  outboundHeaders.set('referer', targetUrl.origin);
+
   const upstreamResponse = await fetch(targetUrl.toString(), {
-    headers: {
-      ...request.headers,
-      Host: targetUrl.hostname,
-      Referer: targetUrl.origin,
-    },
+    headers: outboundHeaders,
     redirect: 'manual',
   });
 
