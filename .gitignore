@@ -31,3 +31,5 @@ dist-ssr
 
 # Ignore other large media
 # public/aurora.jpg
+
+.git.bfg-report
