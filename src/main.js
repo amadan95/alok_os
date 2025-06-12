@@ -82,7 +82,7 @@ Dock.addApplication({
 
 Dock.addApplication({
   name: 'iChat',
-  icon: '/iChat Photoroom.jpg',
+  icon: '/Photoroom iChat.png',
   action: () => {
     import('./apps/iChat').then(({ default: iChat }) => {
       const app = new iChat();

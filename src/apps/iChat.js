@@ -3,7 +3,7 @@ import WindowManager from '../WindowManager';
 
 class iChat {
   constructor() {
-    this.icon = '/iChat Photoroom.jpg';
+    this.icon = '/Photoroom iChat.png';
     this.messages = [
       {
         role: 'system',
