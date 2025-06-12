@@ -17,8 +17,7 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    background: url('/icons/chat-bg.png'), #e6e6e6; /* optional pattern */
-    background-size: cover;
+    background: #e6e6e6;
 }
 
 .chat-bubble {
