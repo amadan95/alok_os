@@ -80,6 +80,17 @@ Dock.addApplication({
 });
 */
 
+Dock.addApplication({
+  name: 'iChat',
+  icon: '/iChat Photoroom.jpg',
+  action: () => {
+    import('./apps/iChat').then(({ default: iChat }) => {
+      const app = new iChat();
+      app.launch();
+    });
+  }
+});
+
 function updateDateTime() {
   const dateTimeElement = document.getElementById('date-time');
   if (dateTimeElement) {
