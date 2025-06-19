@@ -1,4 +1,9 @@
 {
   "version": 2,
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "functions": {
+    "api/**/*.js": {
+      "runtime": "edge"
+    }
+  }
 } 
