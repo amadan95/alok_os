@@ -1,0 +1,23 @@
+{
+  "builds": [
+    {
+      "src": "api/ichat.js",
+      "use": "@vercel/edge"
+    },
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "dist" }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/ichat",
+      "dest": "/api/ichat"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+} 
