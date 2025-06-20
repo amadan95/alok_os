@@ -42,6 +42,11 @@ class iChat {
       thread.scrollTop = thread.scrollHeight;
     };
 
+    // Add a welcome message
+    setTimeout(() => {
+      appendMessage('assistant', "Hello! I'm Alok. How can I help you today?");
+    }, 1000);
+
     const callApi = async () => {
       const userText = input.value.trim();
       if (!userText) return;
@@ -57,6 +62,13 @@ class iChat {
       thread.appendChild(placeholder);
       thread.scrollTop = thread.scrollHeight;
 
+      // Set a timeout to use fallback response if API takes too long
+      const timeoutId = setTimeout(() => {
+        console.log('API request timed out, using fallback response');
+        placeholder.textContent = "I'm here! What can I help you with today?";
+        this.messages.push({ role: 'assistant', content: "I'm here! What can I help you with today?" });
+      }, 5000);
+
       try {
         console.log('Sending request to API server');
         const requestBody = JSON.stringify({ messages: this.messages });
@@ -64,12 +76,22 @@ class iChat {
         
         // Use the API endpoint on the main server
         console.log('Fetching from API endpoint:', '/api/ichat');
-        const resp = await fetch('/api/ichat', {
+        
+        // Add timestamp to URL to prevent caching
+        const timestamp = new Date().getTime();
+        const resp = await fetch(`/api/ichat?t=${timestamp}`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache'
+          },
           body: requestBody
         });
         
+        // Clear the timeout since we got a response
+        clearTimeout(timeoutId);
+        
+        console.log('Response received');
         console.log('Response status:', resp.status);
         console.log('Response headers:', Object.fromEntries([...resp.headers.entries()]));
         
@@ -88,16 +110,9 @@ class iChat {
           
           // Show a user-friendly error message
           if (resp.status === 401) {
-            placeholder.textContent = 'API key error: You need to set up a valid Hugging Face API key. Check the console for instructions.';
-            console.log('%c🔑 Hugging Face API Key Setup Instructions', 'font-size: 14px; font-weight: bold; color: #e67e22;');
-            console.log('1. Go to https://huggingface.co/settings/tokens');
-            console.log('2. Sign in or create an account');
-            console.log('3. Create a new token with READ access');
-            console.log('4. Copy the token (it should start with "hf_")');
-            console.log('5. Open your .env file and replace "hf_your_actual_key_here" with your token');
-            console.log('6. Restart the API server');
+            placeholder.textContent = 'API key error: You need to set up a valid Hugging Face API key.';
           } else if (resp.status === 500) {
-            placeholder.textContent = `Server error: ${errorData.details || 'Unknown server error'}`;
+            placeholder.textContent = `I'm having trouble connecting to my brain right now. Let's chat anyway!`;
             console.error('Server error details:', errorData);
           } else if (errorData.details) {
             placeholder.textContent = `Error: ${errorData.details}`;
@@ -128,8 +143,11 @@ class iChat {
           console.error('Empty response content:', data);
         }
       } catch (err) {
+        // Clear the timeout since we got an error
+        clearTimeout(timeoutId);
+        
         console.error('Error in callApi:', err);
-        placeholder.textContent = 'Sorry, I ran into a connection error. Please check if the API server is running.';
+        placeholder.textContent = "I'm having trouble connecting right now, but I'm still here to chat!";
       }
       thread.scrollTop = thread.scrollHeight;
     };
