@@ -60,6 +60,10 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
       "Yes, I'm here. No, I don't want to discuss the weather. What's actually on your mind that doesn't involve small talk?",
       "Oh great, another chat. To quote Ron Swanson, 'I know what I'm about, son.' What do you actually need help with?"
     ];
+    
+    // Create message sound for notifications
+    this.messageSound = new Audio('/sounds/AIM Sound from YouTube.mp3');
+    this.messageSound.preload = 'auto';
   }
 
   // Helper function to sanitize messages for logging
@@ -72,6 +76,27 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
       }
       return { ...msg };
     });
+  }
+  
+  // Play message received sound
+  playMessageSound() {
+    try {
+      // Reset the audio to the beginning if it's already playing
+      this.messageSound.pause();
+      this.messageSound.currentTime = 0;
+      
+      // Play the sound
+      const playPromise = this.messageSound.play();
+      
+      // Handle potential play() promise rejection (browser policy may require user interaction)
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.warn('Audio playback was prevented:', error);
+        });
+      }
+    } catch (err) {
+      console.error('Error playing message sound:', err);
+    }
   }
 
   launch() {
@@ -101,6 +126,11 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
       bubble.textContent = text;
       thread.appendChild(bubble);
       thread.scrollTop = thread.scrollHeight;
+      
+      // Play sound when receiving a message (not for user's own messages)
+      if (role === 'assistant') {
+        this.playMessageSound();
+      }
     };
 
     // Add a welcome message
@@ -135,6 +165,8 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
         const fallbackResponse = getRandomFallbackResponse();
         placeholder.textContent = fallbackResponse;
         this.messages.push({ role: 'assistant', content: fallbackResponse });
+        // Play message sound when using fallback response
+        this.playMessageSound();
       }, 3000);
 
       try {
@@ -184,6 +216,8 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
           const fallbackResponse = getRandomFallbackResponse();
           placeholder.textContent = fallbackResponse;
           this.messages.push({ role: 'assistant', content: fallbackResponse });
+          // Play message sound for fallback response
+          this.playMessageSound();
           return;
         }
         
@@ -199,16 +233,22 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
           const fallbackResponse = getRandomFallbackResponse();
           placeholder.textContent = fallbackResponse;
           this.messages.push({ role: 'assistant', content: fallbackResponse });
+          // Play message sound for fallback response
+          this.playMessageSound();
           return;
         }
         
         if (data && data.content) {
           placeholder.textContent = data.content;
           this.messages.push({ role: 'assistant', content: data.content });
+          // Play message sound for API response
+          this.playMessageSound();
         } else {
           const fallbackResponse = getRandomFallbackResponse();
           placeholder.textContent = fallbackResponse;
           this.messages.push({ role: 'assistant', content: fallbackResponse });
+          // Play message sound for fallback response
+          this.playMessageSound();
         }
       } catch (err) {
         // Clear the timeout since we got an error
@@ -218,6 +258,8 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
         const fallbackResponse = getRandomFallbackResponse();
         placeholder.textContent = fallbackResponse;
         this.messages.push({ role: 'assistant', content: fallbackResponse });
+        // Play message sound for fallback response
+        this.playMessageSound();
       }
       thread.scrollTop = thread.scrollHeight;
     };
