@@ -89,7 +89,7 @@ export default async function handler(req) {
       
       // Make the API call with a timeout
       const responsePromise = client.chatCompletion({
-        model: "meta-llama/Llama-3.1-8B-Instruct",
+        model: "deepseek-ai/Janus-Pro-7B",
         messages: messages,
         temperature: 0.85,  // Higher temperature for more sarcastic, creative responses
         max_tokens: 200    // Allow for slightly longer responses to fit in sarcasm
