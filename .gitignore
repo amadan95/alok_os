@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
+.env
 .env.local
 
 # Editor directories and files
@@ -33,3 +34,4 @@ dist-ssr
 # public/aurora.jpg
 
 .git.bfg-report
+.vercel

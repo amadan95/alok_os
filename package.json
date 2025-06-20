@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "start": "vite",
+    "dev": "node server.js",
+    "start": "node server.js",
     "build": "vite build",
     "preview": "vite preview"
   },
@@ -18,8 +18,14 @@
     "vite": "^5.4.2"
   },
   "dependencies": {
+    "@huggingface/inference": "^4.0.6",
+    "ai": "^2.2.37",
     "cheerio": "^1.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^4.21.2",
     "follow-redirects": "^1.15.9",
-    "http-proxy-middleware": "^3.0.5"
+    "http-proxy-middleware": "^3.0.5",
+    "openai": "^4.104.0"
   }
 }
