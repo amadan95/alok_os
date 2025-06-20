@@ -52,15 +52,6 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
       }
     ];
     
-    // Pre-defined responses for fallback
-    this.fallbackResponses = [
-      "Look who found the chat app. What's next on your vintage tech adventure, discovering how to double-click? 🙄",
-      "As Abed would say, 'Cool. Cool cool cool.' Now that you've mastered opening apps, what profound question do you have?",
-      "You've reached iChat. Congrats on your archaeological discovery. What can this digital relic help you with today?",
-      "Yes, I'm here. No, I don't want to discuss the weather. What's actually on your mind that doesn't involve small talk?",
-      "Oh great, another chat. To quote Ron Swanson, 'I know what I'm about, son.' What do you actually need help with?"
-    ];
-    
     // Create message sound for notifications
     this.messageSound = new Audio('/sounds/aim-sound.mp3');
     this.messageSound.preload = 'auto';
@@ -162,9 +153,9 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
       appendMessage('assistant', "Well look who wandered into iChat. Welcome to 2005, time traveler. What's your take on this retro Mac vibe? Genuinely curious or just procrastinating on actual work? 🤔");
     }, 1000);
 
-    const getRandomFallbackResponse = () => {
-      const index = Math.floor(Math.random() * this.fallbackResponses.length);
-      return this.fallbackResponses[index];
+    // Default message when API fails
+    const getDefaultErrorMessage = () => {
+      return "Connection issue. Let's blame it on these vintage Y2K-era servers. Try again? 🔄";
     };
 
     const callApi = async () => {
@@ -182,14 +173,13 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
       thread.appendChild(placeholder);
       thread.scrollTop = thread.scrollHeight;
 
-      // Set a timeout to use fallback response if API takes too long
-      // Reduced to 3 seconds for better user experience
+      // Set a timeout to use default error message if API takes too long
       const timeoutId = setTimeout(() => {
-        console.log('API request timed out, using fallback response');
-        const fallbackResponse = getRandomFallbackResponse();
-        placeholder.textContent = fallbackResponse;
-        this.messages.push({ role: 'assistant', content: fallbackResponse });
-        // Play message sound when using fallback response
+        console.log('API request timed out, using default error message');
+        const errorMessage = getDefaultErrorMessage();
+        placeholder.textContent = errorMessage;
+        this.messages.push({ role: 'assistant', content: errorMessage });
+        // Play message sound when using error message
         this.playMessageSound();
       }, 3000);
 
@@ -236,11 +226,11 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
             errorData = { error: 'Unknown error', details: errorText };
           }
           
-          // Use fallback response for errors
-          const fallbackResponse = getRandomFallbackResponse();
-          placeholder.textContent = fallbackResponse;
-          this.messages.push({ role: 'assistant', content: fallbackResponse });
-          // Play message sound for fallback response
+          // Use default error message for errors
+          const errorMessage = getDefaultErrorMessage();
+          placeholder.textContent = errorMessage;
+          this.messages.push({ role: 'assistant', content: errorMessage });
+          // Play message sound for error message
           this.playMessageSound();
           return;
         }
@@ -254,10 +244,10 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
           console.log('Parsed response data:', data);
         } catch (e) {
           console.error('Failed to parse response as JSON:', e);
-          const fallbackResponse = getRandomFallbackResponse();
-          placeholder.textContent = fallbackResponse;
-          this.messages.push({ role: 'assistant', content: fallbackResponse });
-          // Play message sound for fallback response
+          const errorMessage = getDefaultErrorMessage();
+          placeholder.textContent = errorMessage;
+          this.messages.push({ role: 'assistant', content: errorMessage });
+          // Play message sound for error message
           this.playMessageSound();
           return;
         }
@@ -268,10 +258,10 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
           // Play message sound for API response
           this.playMessageSound();
         } else {
-          const fallbackResponse = getRandomFallbackResponse();
-          placeholder.textContent = fallbackResponse;
-          this.messages.push({ role: 'assistant', content: fallbackResponse });
-          // Play message sound for fallback response
+          const errorMessage = getDefaultErrorMessage();
+          placeholder.textContent = errorMessage;
+          this.messages.push({ role: 'assistant', content: errorMessage });
+          // Play message sound for error message
           this.playMessageSound();
         }
       } catch (err) {
@@ -279,10 +269,10 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
         clearTimeout(timeoutId);
         
         console.error('Error in callApi:', err);
-        const fallbackResponse = getRandomFallbackResponse();
-        placeholder.textContent = fallbackResponse;
-        this.messages.push({ role: 'assistant', content: fallbackResponse });
-        // Play message sound for fallback response
+        const errorMessage = getDefaultErrorMessage();
+        placeholder.textContent = errorMessage;
+        this.messages.push({ role: 'assistant', content: errorMessage });
+        // Play message sound for error message
         this.playMessageSound();
       }
       thread.scrollTop = thread.scrollHeight;

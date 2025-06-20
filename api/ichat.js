@@ -2,20 +2,8 @@ export const config = {
   runtime: 'edge'
 };
 
-// Fallback responses in case the API call fails
-const fallbackResponses = [
-  "Look who discovered the chat app, you tech archaeologist. What burning questions about this digital time capsule are keeping you up at night? 🙄",
-  "Ah yes, another chat request. As Troy Barnes would say, 'Cool cool cool.' What's on your mind besides this retro interface?",
-  "Frank Ocean, Kendrick, MF DOOM in the library? Your music taste is the only thing not stuck in 2005 here. What's up?",
-  "So you clicked on iChat. Revolutionary. Next you'll tell me you've discovered fire. What can I actually help with?",
-  "Tiger OS, huh? Either you're nostalgic or your tech budget's tighter than NYC apartment space. What do you need?"
-];
-
-// Get a random fallback response
-function getFallbackResponse() {
-  const index = Math.floor(Math.random() * fallbackResponses.length);
-  return fallbackResponses[index];
-}
+// Default error message when API call fails
+const DEFAULT_ERROR_MESSAGE = "Connection issue. Let's blame it on these vintage Y2K-era servers. Try again? 🔄";
 
 // Helper function to sanitize logs by redacting system prompt content
 function sanitizeMessagesForLogs(messages) {
@@ -51,7 +39,7 @@ export default async function handler(req) {
     // Check if we have a POST request
     if (req.method !== 'POST') {
       return new Response(JSON.stringify({
-        content: getFallbackResponse()
+        content: DEFAULT_ERROR_MESSAGE
       }), {
         status: 200,
         headers
@@ -61,9 +49,9 @@ export default async function handler(req) {
     // Get the API key
     const apiKey = process.env.HF_API_KEY;
     if (!apiKey) {
-      // If no API key, return a fallback response
+      // If no API key, return the default error message
       return new Response(JSON.stringify({
-        content: getFallbackResponse()
+        content: DEFAULT_ERROR_MESSAGE
       }), {
         status: 200,
         headers
@@ -75,9 +63,9 @@ export default async function handler(req) {
     const messages = body.messages;
     
     if (!messages || !Array.isArray(messages)) {
-      // If invalid messages, return a fallback response
+      // If invalid messages, return the default error message
       return new Response(JSON.stringify({
-        content: getFallbackResponse()
+        content: DEFAULT_ERROR_MESSAGE
       }), {
         status: 200,
         headers
@@ -118,18 +106,20 @@ export default async function handler(req) {
         headers
       });
     } catch (error) {
-      // If the API call fails, return a fallback response
+      // If the API call fails, return the default error message
+      console.error('[API] Error calling Hugging Face:', error);
       return new Response(JSON.stringify({
-        content: getFallbackResponse()
+        content: DEFAULT_ERROR_MESSAGE
       }), {
         status: 200,
         headers
       });
     }
   } catch (error) {
-    // Even if there's an error, return a valid response
+    // Even if there's an error, return a valid response with the default error message
+    console.error('[API] Unexpected error:', error);
     return new Response(JSON.stringify({
-      content: getFallbackResponse()
+      content: DEFAULT_ERROR_MESSAGE
     }), { 
       status: 200,
       headers
