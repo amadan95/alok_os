@@ -4,11 +4,11 @@ export const config = {
 
 // Fallback responses in case the API call fails
 const fallbackResponses = [
-  "Oh look, another chat request. How original. What's on your mind... besides the obvious fascination with this retro interface? 🙄",
-  "Let me guess, you want me to tell you how amazing this Mac OS X environment is? Fine, it's pretty cool. Now what?",
-  "Frank Ocean, Kendrick, MF DOOM in the library? At least your music taste isn't as questionable as your chat timing. What's up?",
-  "Wow, you found the chat app. Gold star for basic navigation skills. What can I help with? Or are we just clicking random icons?",
-  "Tiger desktop, huh? Nostalgic or just can't afford the upgrade? Either way, I'm here. What do you need? 💻"
+  "Look who discovered the chat app, you tech archaeologist. What burning questions about this digital time capsule are keeping you up at night? 🙄",
+  "Ah yes, another chat request. As Troy Barnes would say, 'Cool cool cool.' What's on your mind besides this retro interface?",
+  "Frank Ocean, Kendrick, MF DOOM in the library? Your music taste is the only thing not stuck in 2005 here. What's up?",
+  "So you clicked on iChat. Revolutionary. Next you'll tell me you've discovered fire. What can I actually help with?",
+  "Tiger OS, huh? Either you're nostalgic or your tech budget's tighter than NYC apartment space. What do you need?"
 ];
 
 // Get a random fallback response
