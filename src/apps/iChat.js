@@ -63,6 +63,7 @@ class iChat {
         console.log('Request body:', requestBody);
         
         // Use the API endpoint on the main server
+        console.log('Fetching from API endpoint:', '/api/ichat');
         const resp = await fetch('/api/ichat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -70,10 +71,20 @@ class iChat {
         });
         
         console.log('Response status:', resp.status);
+        console.log('Response headers:', Object.fromEntries([...resp.headers.entries()]));
         
         if (!resp.ok) {
-          const errorData = await resp.json().catch(() => ({ error: 'Unknown error' }));
-          console.error('API error:', errorData);
+          const errorText = await resp.text();
+          console.error('API error response text:', errorText);
+          
+          let errorData;
+          try {
+            errorData = JSON.parse(errorText);
+            console.error('Parsed API error:', errorData);
+          } catch (e) {
+            console.error('Failed to parse error response as JSON:', e);
+            errorData = { error: 'Unknown error', details: errorText };
+          }
           
           // Show a user-friendly error message
           if (resp.status === 401) {
@@ -85,6 +96,9 @@ class iChat {
             console.log('4. Copy the token (it should start with "hf_")');
             console.log('5. Open your .env file and replace "hf_your_actual_key_here" with your token');
             console.log('6. Restart the API server');
+          } else if (resp.status === 500) {
+            placeholder.textContent = `Server error: ${errorData.details || 'Unknown server error'}`;
+            console.error('Server error details:', errorData);
           } else if (errorData.details) {
             placeholder.textContent = `Error: ${errorData.details}`;
           } else {
@@ -93,8 +107,18 @@ class iChat {
           return;
         }
         
-        const data = await resp.json();
-        console.log('Response data:', data);
+        const responseText = await resp.text();
+        console.log('Raw response text:', responseText);
+        
+        let data;
+        try {
+          data = JSON.parse(responseText);
+          console.log('Parsed response data:', data);
+        } catch (e) {
+          console.error('Failed to parse response as JSON:', e);
+          placeholder.textContent = 'Sorry, I received an invalid response from the server.';
+          return;
+        }
         
         if (data && data.content) {
           placeholder.textContent = data.content;
