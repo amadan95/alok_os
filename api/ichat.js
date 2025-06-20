@@ -4,11 +4,11 @@ export const config = {
 
 // Fallback responses in case the API call fails
 const fallbackResponses = [
-  "Hey! Yeah, this Mac OS X environment is pretty nostalgic. What else would you like to chat about?",
-  "Honestly, I'm just vibing in this retro Mac interface. What's up with you?",
-  "The music library here is pretty solid - Frank Ocean, Kendrick, MF DOOM. You have good taste!",
-  "Yeah, I'm here. What's on your mind? We can chat about the apps or whatever you're into.",
-  "This Tiger desktop brings back memories. What can I help you with today?"
+  "Oh look, another chat request. How original. What's on your mind... besides the obvious fascination with this retro interface? 🙄",
+  "Let me guess, you want me to tell you how amazing this Mac OS X environment is? Fine, it's pretty cool. Now what?",
+  "Frank Ocean, Kendrick, MF DOOM in the library? At least your music taste isn't as questionable as your chat timing. What's up?",
+  "Wow, you found the chat app. Gold star for basic navigation skills. What can I help with? Or are we just clicking random icons?",
+  "Tiger desktop, huh? Nostalgic or just can't afford the upgrade? Either way, I'm here. What do you need? 💻"
 ];
 
 // Get a random fallback response
@@ -88,8 +88,8 @@ export default async function handler(req) {
       const responsePromise = client.chatCompletion({
         model: "meta-llama/Llama-3.1-8B-Instruct",
         messages: messages,
-        temperature: 0.7,  // Slightly higher temperature for more creative responses
-        max_tokens: 150    // Allow for slightly longer responses
+        temperature: 0.85,  // Higher temperature for more sarcastic, creative responses
+        max_tokens: 200    // Allow for slightly longer responses to fit in sarcasm
       });
       
       // Race between the API call and the timeout
