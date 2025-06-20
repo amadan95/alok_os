@@ -4,11 +4,11 @@ export const config = {
 
 // Fallback responses in case the API call fails
 const fallbackResponses = [
-  "Hello! I'm Alok, your virtual buddy in this retro Mac OS X environment. How can I help you today?",
-  "Hey there! How's your day going? I'm Alok, your friendly OS X companion.",
-  "Hi! I'm here and ready to chat about anything you'd like.",
-  "Hello! What would you like to talk about today?",
-  "Hey! I'm Alok. What can I help you with in this retro Mac environment?"
+  "Hey! Yeah, this Mac OS X environment is pretty nostalgic. What else would you like to chat about?",
+  "Honestly, I'm just vibing in this retro Mac interface. What's up with you?",
+  "The music library here is pretty solid - Frank Ocean, Kendrick, MF DOOM. You have good taste!",
+  "Yeah, I'm here. What's on your mind? We can chat about the apps or whatever you're into.",
+  "This Tiger desktop brings back memories. What can I help you with today?"
 ];
 
 // Get a random fallback response
@@ -81,13 +81,15 @@ export default async function handler(req) {
       
       // Set a timeout for the API call
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('API call timed out')), 4000);
+        setTimeout(() => reject(new Error('API call timed out')), 5000);
       });
       
       // Make the API call with a timeout
       const responsePromise = client.chatCompletion({
         model: "meta-llama/Llama-3.1-8B-Instruct",
-        messages: messages
+        messages: messages,
+        temperature: 0.7,  // Slightly higher temperature for more creative responses
+        max_tokens: 150    // Allow for slightly longer responses
       });
       
       // Race between the API call and the timeout
