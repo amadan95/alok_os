@@ -27,5 +27,8 @@
     "follow-redirects": "^1.15.9",
     "http-proxy-middleware": "^3.0.5",
     "openai": "^4.104.0"
+  },
+  "engines": {
+    "node": "18.x"
   }
 }
