@@ -87,24 +87,38 @@ export default async function handler(req) {
         setTimeout(() => reject(new Error('API call timed out')), 8000);
       });
       
-      // Make the API call with a timeout
-      const responsePromise = client.chatCompletion({
-        model: "deepseek-ai/Janus-Pro-7B",
-        messages: messages,
-        temperature: 0.85,  // Higher temperature for more sarcastic, creative responses
-        max_tokens: 200    // Allow for slightly longer responses to fit in sarcasm
-      });
-      
-      // Race between the API call and the timeout
-      const response = await Promise.race([responsePromise, timeoutPromise]);
-      
-      // Return the response
-      return new Response(JSON.stringify({
-        content: response.choices[0].message.content
-      }), {
-        status: 200,
-        headers
-      });
+      try {
+        // Make the API call with a timeout
+        const responsePromise = client.chatCompletion({
+          model: "meta-llama/Llama-3.1-8B-Instruct",
+          messages: messages,
+          temperature: 0.85,  // Higher temperature for more sarcastic, creative responses
+          max_tokens: 200    // Allow for slightly longer responses to fit in sarcasm
+        });
+        
+        // Race between the API call and the timeout
+        const response = await Promise.race([responsePromise, timeoutPromise]);
+        
+        // Return the response
+        return new Response(JSON.stringify({
+          content: response.choices[0].message.content
+        }), {
+          status: 200,
+          headers
+        });
+      } catch (error) {
+        // Log detailed error information
+        console.error('[API] Error calling Hugging Face:', error);
+        console.error('[API] Error details:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
+        
+        // If the API call fails, return the default error message
+        return new Response(JSON.stringify({
+          content: DEFAULT_ERROR_MESSAGE
+        }), {
+          status: 200,
+          headers
+        });
+      }
     } catch (error) {
       // If the API call fails, return the default error message
       console.error('[API] Error calling Hugging Face:', error);
