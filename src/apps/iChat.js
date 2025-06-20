@@ -56,6 +56,18 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
     ];
   }
 
+  // Helper function to sanitize messages for logging
+  sanitizeMessagesForLogs(messages) {
+    if (!messages || !Array.isArray(messages)) return [];
+    
+    return messages.map(msg => {
+      if (msg.role === 'system') {
+        return { role: 'system', content: '[REDACTED SYSTEM PROMPT]' };
+      }
+      return { ...msg };
+    });
+  }
+
   launch() {
     this.win = WindowManager.createWindow({
       title: 'iChat – AlokGPT',
@@ -121,8 +133,12 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
 
       try {
         console.log('Sending request to API server');
+        
+        // Create sanitized copy of messages for logging
+        const sanitizedMessages = this.sanitizeMessagesForLogs(this.messages);
+        console.log('Sanitized messages for request:', sanitizedMessages);
+        
         const requestBody = JSON.stringify({ messages: this.messages });
-        console.log('Request body:', requestBody);
         
         // Use the API endpoint on the main server
         console.log('Fetching from API endpoint:', '/api/ichat');

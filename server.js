@@ -9,6 +9,28 @@ dotenv.config();
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+// Helper function to sanitize request body for logging
+function sanitizeRequestForLogs(req) {
+  if (req.path.includes('/api/ichat') && req.body && req.body.messages) {
+    // Create a deep copy of the request body
+    const sanitizedBody = JSON.parse(JSON.stringify(req.body));
+    
+    // Redact system prompt content
+    if (sanitizedBody.messages && Array.isArray(sanitizedBody.messages)) {
+      sanitizedBody.messages = sanitizedBody.messages.map(msg => {
+        if (msg.role === 'system') {
+          return { role: 'system', content: '[REDACTED SYSTEM PROMPT]' };
+        }
+        return msg;
+      });
+    }
+    
+    return { ...req, body: sanitizedBody };
+  }
+  
+  return req;
+}
+
 async function createServer() {
   const app = express();
   
@@ -28,6 +50,8 @@ async function createServer() {
       console.log('[DEBUG] Loading handler from ./api/ichat.js');
       const handler = (await import('./api/ichat.js')).default;
       console.log('[DEBUG] Handler loaded, calling with request');
+      
+      // Don't log the full request with sensitive data
       const response = await handler(req);
       console.log('[DEBUG] Handler response received');
       

@@ -17,6 +17,18 @@ function getFallbackResponse() {
   return fallbackResponses[index];
 }
 
+// Helper function to sanitize logs by redacting system prompt content
+function sanitizeMessagesForLogs(messages) {
+  if (!messages || !Array.isArray(messages)) return "Invalid messages format";
+  
+  return messages.map(msg => {
+    if (msg.role === 'system') {
+      return { role: 'system', content: '[REDACTED SYSTEM PROMPT]' };
+    }
+    return msg;
+  });
+}
+
 export default async function handler(req) {
   // Set CORS headers
   const headers = {
@@ -71,6 +83,9 @@ export default async function handler(req) {
         headers
       });
     }
+    
+    // Log sanitized messages (without system prompt content)
+    console.log('[API] Messages received:', sanitizeMessagesForLogs(messages));
     
     try {
       // Dynamically import the Hugging Face client
