@@ -11,6 +11,15 @@ class iChat {
           'You are Alok, a friendly virtual buddy living inside a retro Mac OS X iChat window. Keep responses concise (max 120 words) and conversational. Do not use markdown.'
       }
     ];
+    
+    // Pre-defined responses for fallback
+    this.fallbackResponses = [
+      "Hey there! How's your day going?",
+      "Hello! I'm Alok. What would you like to chat about?",
+      "Hi! I'm here and ready to chat. What's on your mind?",
+      "Hey! What's up? I'm here to chat about anything you'd like.",
+      "Hello! I'm your virtual buddy Alok. How can I help you today?"
+    ];
   }
 
   launch() {
@@ -47,6 +56,11 @@ class iChat {
       appendMessage('assistant', "Hello! I'm Alok. How can I help you today?");
     }, 1000);
 
+    const getRandomFallbackResponse = () => {
+      const index = Math.floor(Math.random() * this.fallbackResponses.length);
+      return this.fallbackResponses[index];
+    };
+
     const callApi = async () => {
       const userText = input.value.trim();
       if (!userText) return;
@@ -63,11 +77,13 @@ class iChat {
       thread.scrollTop = thread.scrollHeight;
 
       // Set a timeout to use fallback response if API takes too long
+      // Reduced to 3 seconds for better user experience
       const timeoutId = setTimeout(() => {
         console.log('API request timed out, using fallback response');
-        placeholder.textContent = "I'm here! What can I help you with today?";
-        this.messages.push({ role: 'assistant', content: "I'm here! What can I help you with today?" });
-      }, 5000);
+        const fallbackResponse = getRandomFallbackResponse();
+        placeholder.textContent = fallbackResponse;
+        this.messages.push({ role: 'assistant', content: fallbackResponse });
+      }, 3000);
 
       try {
         console.log('Sending request to API server');
@@ -83,7 +99,7 @@ class iChat {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
-            'Cache-Control': 'no-cache'
+            'Cache-Control': 'no-cache, no-store'
           },
           body: requestBody
         });
@@ -108,17 +124,10 @@ class iChat {
             errorData = { error: 'Unknown error', details: errorText };
           }
           
-          // Show a user-friendly error message
-          if (resp.status === 401) {
-            placeholder.textContent = 'API key error: You need to set up a valid Hugging Face API key.';
-          } else if (resp.status === 500) {
-            placeholder.textContent = `I'm having trouble connecting to my brain right now. Let's chat anyway!`;
-            console.error('Server error details:', errorData);
-          } else if (errorData.details) {
-            placeholder.textContent = `Error: ${errorData.details}`;
-          } else {
-            placeholder.textContent = 'Sorry, I ran into an error. Please try again later.';
-          }
+          // Use fallback response for errors
+          const fallbackResponse = getRandomFallbackResponse();
+          placeholder.textContent = fallbackResponse;
+          this.messages.push({ role: 'assistant', content: fallbackResponse });
           return;
         }
         
@@ -131,7 +140,9 @@ class iChat {
           console.log('Parsed response data:', data);
         } catch (e) {
           console.error('Failed to parse response as JSON:', e);
-          placeholder.textContent = 'Sorry, I received an invalid response from the server.';
+          const fallbackResponse = getRandomFallbackResponse();
+          placeholder.textContent = fallbackResponse;
+          this.messages.push({ role: 'assistant', content: fallbackResponse });
           return;
         }
         
@@ -139,15 +150,18 @@ class iChat {
           placeholder.textContent = data.content;
           this.messages.push({ role: 'assistant', content: data.content });
         } else {
-          placeholder.textContent = 'Sorry, I received an empty response. Please try again.';
-          console.error('Empty response content:', data);
+          const fallbackResponse = getRandomFallbackResponse();
+          placeholder.textContent = fallbackResponse;
+          this.messages.push({ role: 'assistant', content: fallbackResponse });
         }
       } catch (err) {
         // Clear the timeout since we got an error
         clearTimeout(timeoutId);
         
         console.error('Error in callApi:', err);
-        placeholder.textContent = "I'm having trouble connecting right now, but I'm still here to chat!";
+        const fallbackResponse = getRandomFallbackResponse();
+        placeholder.textContent = fallbackResponse;
+        this.messages.push({ role: 'assistant', content: fallbackResponse });
       }
       thread.scrollTop = thread.scrollHeight;
     };
