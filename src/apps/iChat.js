@@ -173,15 +173,22 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
       thread.appendChild(placeholder);
       thread.scrollTop = thread.scrollHeight;
 
+      // Flag to track if we've already updated the placeholder
+      let placeholderUpdated = false;
+
       // Set a timeout to use default error message if API takes too long
       const timeoutId = setTimeout(() => {
-        console.log('API request timed out, using default error message');
-        const errorMessage = getDefaultErrorMessage();
-        placeholder.textContent = errorMessage;
-        this.messages.push({ role: 'assistant', content: errorMessage });
-        // Play message sound when using error message
-        this.playMessageSound();
-      }, 3000);
+        // Only update if we haven't received a response yet
+        if (!placeholderUpdated) {
+          console.log('API request timed out, using default error message');
+          const errorMessage = getDefaultErrorMessage();
+          placeholder.textContent = errorMessage;
+          this.messages.push({ role: 'assistant', content: errorMessage });
+          // Play message sound when using error message
+          this.playMessageSound();
+          placeholderUpdated = true;
+        }
+      }, 10000); // Increased to 10 seconds to give API more time to respond
 
       try {
         console.log('Sending request to API server');
@@ -232,6 +239,7 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
           this.messages.push({ role: 'assistant', content: errorMessage });
           // Play message sound for error message
           this.playMessageSound();
+          placeholderUpdated = true;
           return;
         }
         
@@ -249,6 +257,7 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
           this.messages.push({ role: 'assistant', content: errorMessage });
           // Play message sound for error message
           this.playMessageSound();
+          placeholderUpdated = true;
           return;
         }
         
@@ -257,12 +266,14 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
           this.messages.push({ role: 'assistant', content: data.content });
           // Play message sound for API response
           this.playMessageSound();
+          placeholderUpdated = true;
         } else {
           const errorMessage = getDefaultErrorMessage();
           placeholder.textContent = errorMessage;
           this.messages.push({ role: 'assistant', content: errorMessage });
           // Play message sound for error message
           this.playMessageSound();
+          placeholderUpdated = true;
         }
       } catch (err) {
         // Clear the timeout since we got an error
@@ -274,6 +285,7 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
         this.messages.push({ role: 'assistant', content: errorMessage });
         // Play message sound for error message
         this.playMessageSound();
+        placeholderUpdated = true;
       }
       thread.scrollTop = thread.scrollHeight;
     };

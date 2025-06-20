@@ -84,7 +84,7 @@ export default async function handler(req) {
       
       // Set a timeout for the API call
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('API call timed out')), 5000);
+        setTimeout(() => reject(new Error('API call timed out')), 8000);
       });
       
       // Make the API call with a timeout
