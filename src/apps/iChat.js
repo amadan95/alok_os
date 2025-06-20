@@ -62,8 +62,18 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
     ];
     
     // Create message sound for notifications
-    this.messageSound = new Audio('/sounds/AIM Sound from YouTube.mp3');
+    this.messageSound = new Audio('/sounds/aim-sound.mp3');
     this.messageSound.preload = 'auto';
+    console.log('Initialized message sound with path:', '/sounds/aim-sound.mp3');
+    
+    // Add event listeners for audio debugging
+    this.messageSound.addEventListener('canplaythrough', () => {
+      console.log('Audio file loaded successfully and can play');
+    });
+    
+    this.messageSound.addEventListener('error', (e) => {
+      console.error('Audio loading error:', e);
+    });
   }
 
   // Helper function to sanitize messages for logging
@@ -81,6 +91,13 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
   // Play message received sound
   playMessageSound() {
     try {
+      console.log('Attempting to play message sound...');
+      
+      // Check if the audio is ready
+      if (this.messageSound.readyState < 2) {
+        console.warn('Audio not fully loaded yet, readyState:', this.messageSound.readyState);
+      }
+      
       // Reset the audio to the beginning if it's already playing
       this.messageSound.pause();
       this.messageSound.currentTime = 0;
@@ -90,9 +107,16 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
       
       // Handle potential play() promise rejection (browser policy may require user interaction)
       if (playPromise !== undefined) {
-        playPromise.catch(error => {
-          console.warn('Audio playback was prevented:', error);
-        });
+        playPromise
+          .then(() => {
+            console.log('Audio playback started successfully');
+          })
+          .catch(error => {
+            console.warn('Audio playback was prevented:', error);
+            
+            // Try loading the audio again
+            this.messageSound.load();
+          });
       }
     } catch (err) {
       console.error('Error playing message sound:', err);
