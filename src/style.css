@@ -449,3 +449,132 @@ body, html {
 #date-time {
     padding-right: 24px;
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+    /* Menu Bar Adjustments */
+    #menu-bar {
+        height: 36px;
+        padding: 0 5px;
+    }
+    
+    .menu-item:not(.dropdown) {
+        font-size: 14px;
+    }
+    
+    /* Hide non-essential menu items on mobile */
+    .menu-item.dropdown:not(:first-child):not(:last-child) {
+        display: none;
+    }
+    
+    .apple-logo {
+        transform: scale(1.2);
+    }
+    
+    /* Dock Adjustments */
+    #dock {
+        padding: 3px;
+        border-radius: 8px;
+        overflow-x: auto;
+        justify-content: flex-start;
+        max-width: 95%;
+    }
+    
+    .dock-item {
+        width: 64px;
+        height: 64px;
+        margin: 0 3px;
+    }
+    
+    .dock-item img {
+        width: 64px;
+        height: 64px;
+    }
+    
+    .dock-item .app-label {
+        bottom: 75px;
+        font-size: 10px;
+        padding: 3px 6px;
+    }
+    
+    /* Window Adjustments */
+    .window {
+        width: 95% !important;
+        height: 80% !important;
+        top: 50px !important;
+        left: 2.5% !important;
+        min-width: unset;
+    }
+    
+    .window-controls {
+        left: 5px;
+    }
+    
+    .window-control {
+        width: 14px;
+        height: 14px;
+    }
+    
+    .window-title {
+        font-size: 14px;
+    }
+    
+    /* Make sure content is scrollable on mobile */
+    .window-body {
+        padding: 10px;
+        overflow: auto;
+    }
+    
+    /* Adjust chat app for mobile */
+    .ichat-app .chat-input-bar {
+        padding: 5px;
+    }
+    
+    .ichat-app .chat-input {
+        font-size: 16px; /* Better for mobile typing */
+    }
+    
+    /* Adjust calculator for mobile */
+    .calculator .key {
+        font-size: 18px;
+        height: 40px;
+    }
+    
+    /* Ensure touch targets are at least 44px for accessibility */
+    .window-control, .dock-item, .menu-item, .calculator .key {
+        min-height: 44px;
+        min-width: 44px;
+    }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+    .dock-item {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .dock-item img {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .dock-item .app-label {
+        bottom: 60px;
+    }
+    
+    /* Further simplify menu bar */
+    .app-name {
+        font-size: 14px;
+    }
+    
+    #date-time {
+        font-size: 12px;
+    }
+    
+    /* Ensure windows take full width on very small screens */
+    .window {
+        width: 98% !important;
+        left: 1% !important;
+    }
+}
