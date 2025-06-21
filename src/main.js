@@ -14,6 +14,13 @@ import iPod from './apps/iPod';
 function setupVideoBackground() {
   const videoPath = '/Gifakira Video 100.308.mp4';
   
+  // Remove any existing video backgrounds
+  const existingVideos = document.querySelectorAll('#video-background');
+  existingVideos.forEach(video => video.remove());
+  
+  // Remove any background images that might be set
+  document.body.style.backgroundImage = 'none';
+  
   // Check if video file exists
   fetch(videoPath, { method: 'HEAD' })
     .then(response => {
@@ -21,11 +28,13 @@ function setupVideoBackground() {
         console.log("Video file exists, setting up video background");
         createVideoElement(videoPath);
       } else {
-        console.warn("Video file not found, falling back to image background");
+        console.warn("Video file not found, falling back to solid background");
+        document.body.style.backgroundColor = 'black';
       }
     })
     .catch(error => {
       console.error("Error checking for video file:", error);
+      document.body.style.backgroundColor = 'black';
     });
 }
 
@@ -38,19 +47,13 @@ function createVideoElement(videoPath) {
   videoElement.muted = true;
   videoElement.playsInline = true;
   
-  // Append to desktop before other elements
-  const desktop = document.getElementById('desktop');
-  if (desktop && desktop.firstChild) {
-    desktop.insertBefore(videoElement, desktop.firstChild);
-  } else if (desktop) {
-    desktop.appendChild(videoElement);
-  } else {
-    document.body.appendChild(videoElement);
-  }
+  // Append to body instead of desktop to ensure it's behind everything
+  document.body.prepend(videoElement);
   
   // Start playing
   videoElement.play().catch(error => {
     console.error("Error playing video background:", error);
+    document.body.style.backgroundColor = 'black';
   });
 }
 

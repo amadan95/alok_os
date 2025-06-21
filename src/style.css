@@ -12,15 +12,35 @@ body, html {
   font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
   cursor: default;
   user-select: none;
-  background: url('/aurora.jpg') no-repeat center center fixed;
-  background-size: cover;
-  background-position: center;
+  background: black; /* Fallback background color */
 }
 
 #desktop {
   width: 100%;
   height: 100%;
   position: relative;
+  background: none; /* Remove any background */
+}
+
+/* Video background */
+#video-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  background: black;
+}
+
+/* Hide any default background images */
+body::before,
+body::after,
+#desktop::before,
+#desktop::after {
+  display: none !important;
+  content: none !important;
 }
 
 /* Menu Bar */
