@@ -33,5 +33,8 @@ dist-ssr
 # Ignore other large media
 # public/aurora.jpg
 
+# Make sure we don't ignore our video background
+!public/Gifakira*Video*.mp4
+
 .git.bfg-report
 .vercel
