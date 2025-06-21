@@ -127,6 +127,7 @@ export default async function handler(req) {
       
       try {
         // Make the API call with a timeout
+        console.log('[API] Sending request to HuggingFace for model: meta-llama/Llama-3.1-8B-Instruct');
         const responsePromise = client.chatCompletion({
           model: "meta-llama/Llama-3.1-8B-Instruct",
           messages: processedMessages,
@@ -136,6 +137,9 @@ export default async function handler(req) {
         
         // Race between the API call and the timeout
         const response = await Promise.race([responsePromise, timeoutPromise]);
+        
+        console.log('[API] HuggingFace response received:', JSON.stringify(response).substring(0, 200) + '...');
+        console.log('[API] Sending response content:', response.choices[0].message.content.substring(0, 100) + '...');
         
         // Return the response
         return new Response(JSON.stringify({

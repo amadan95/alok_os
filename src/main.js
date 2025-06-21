@@ -25,6 +25,9 @@ function setupVideoBackground() {
   videoElement.playsInline = true;
   videoElement.controls = false;
   
+  // Set playback rate to slow down the video (0.5 = half speed)
+  videoElement.playbackRate = 0.5;
+  
   // Set CSS properties directly
   videoElement.style.position = 'fixed';
   videoElement.style.top = '0';
@@ -42,10 +45,14 @@ function setupVideoBackground() {
   // Add event listeners
   videoElement.addEventListener('loadeddata', () => {
     console.log('Video loaded successfully');
+    // Set playback rate again after loading to ensure it takes effect
+    videoElement.playbackRate = 0.5;
   });
   
   videoElement.addEventListener('playing', () => {
-    console.log('Video is playing');
+    console.log('Video is playing at speed:', videoElement.playbackRate);
+    // Ensure playback rate is maintained
+    videoElement.playbackRate = 0.5;
   });
   
   videoElement.addEventListener('error', (e) => {
@@ -62,12 +69,21 @@ function setupVideoBackground() {
   // Try to play the video
   const playVideo = () => {
     videoElement.play()
-      .then(() => console.log('Video playback started'))
+      .then(() => {
+        console.log('Video playback started');
+        // Set playback rate again after playback starts
+        videoElement.playbackRate = 0.5;
+      })
       .catch(err => {
         console.error('Error playing video:', err);
-        // Try again on user interaction
+        // Try again with user interaction
         document.addEventListener('click', () => {
-          videoElement.play().catch(e => console.error('Still cannot play video:', e));
+          videoElement.play()
+            .then(() => {
+              // Set playback rate after user interaction play
+              videoElement.playbackRate = 0.5;
+            })
+            .catch(e => console.error('Still cannot play video:', e));
         }, { once: true });
       });
   };
