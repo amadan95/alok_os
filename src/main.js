@@ -20,41 +20,69 @@ function setupVideoBackground() {
   
   // Remove any background images that might be set
   document.body.style.backgroundImage = 'none';
+  document.body.style.backgroundColor = 'black';
   
-  // Check if video file exists
-  fetch(videoPath, { method: 'HEAD' })
-    .then(response => {
-      if (response.ok) {
-        console.log("Video file exists, setting up video background");
-        createVideoElement(videoPath);
-      } else {
-        console.warn("Video file not found, falling back to solid background");
-        document.body.style.backgroundColor = 'black';
-      }
-    })
-    .catch(error => {
-      console.error("Error checking for video file:", error);
-      document.body.style.backgroundColor = 'black';
-    });
+  console.log("Attempting to set up video background with path:", videoPath);
+  
+  // Try to create video element directly without checking
+  createVideoElement(videoPath);
+  
+  // Also try to preload the video
+  const preloadLink = document.createElement('link');
+  preloadLink.rel = 'preload';
+  preloadLink.as = 'video';
+  preloadLink.href = videoPath;
+  document.head.appendChild(preloadLink);
 }
 
 function createVideoElement(videoPath) {
+  console.log("Creating video element with source:", videoPath);
+  
   const videoElement = document.createElement('video');
   videoElement.id = 'video-background';
-  videoElement.src = videoPath;
+  videoElement.crossOrigin = 'anonymous';
   videoElement.autoplay = true;
   videoElement.loop = true;
   videoElement.muted = true;
   videoElement.playsInline = true;
+  videoElement.controls = false;
+  videoElement.preload = 'auto';
+  
+  // Add event listeners for debugging
+  videoElement.addEventListener('loadeddata', () => {
+    console.log("Video data loaded successfully");
+  });
+  
+  videoElement.addEventListener('playing', () => {
+    console.log("Video is now playing");
+  });
+  
+  videoElement.addEventListener('error', (e) => {
+    console.error("Video error:", e);
+    document.body.style.backgroundColor = 'black';
+  });
+  
+  // Set source after adding event listeners
+  videoElement.src = videoPath;
   
   // Append to body instead of desktop to ensure it's behind everything
   document.body.prepend(videoElement);
   
-  // Start playing
-  videoElement.play().catch(error => {
-    console.error("Error playing video background:", error);
-    document.body.style.backgroundColor = 'black';
-  });
+  // Start playing with a slight delay to ensure DOM is ready
+  setTimeout(() => {
+    videoElement.play().then(() => {
+      console.log("Video playback started successfully");
+    }).catch(error => {
+      console.error("Error playing video background:", error);
+      
+      // Try again with user interaction
+      document.addEventListener('click', () => {
+        videoElement.play().catch(e => console.error("Still can't play video after user interaction:", e));
+      }, { once: true });
+      
+      document.body.style.backgroundColor = 'black';
+    });
+  }, 500);
 }
 
 // Initialize video background
