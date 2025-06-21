@@ -10,6 +10,53 @@ import Safari from './apps/Safari';
 import QuickTime from './apps/QuickTime';
 import iPod from './apps/iPod';
 
+// Set up video background
+function setupVideoBackground() {
+  const videoPath = '/Gifakira Video 100.308.mp4';
+  
+  // Check if video file exists
+  fetch(videoPath, { method: 'HEAD' })
+    .then(response => {
+      if (response.ok) {
+        console.log("Video file exists, setting up video background");
+        createVideoElement(videoPath);
+      } else {
+        console.warn("Video file not found, falling back to image background");
+      }
+    })
+    .catch(error => {
+      console.error("Error checking for video file:", error);
+    });
+}
+
+function createVideoElement(videoPath) {
+  const videoElement = document.createElement('video');
+  videoElement.id = 'video-background';
+  videoElement.src = videoPath;
+  videoElement.autoplay = true;
+  videoElement.loop = true;
+  videoElement.muted = true;
+  videoElement.playsInline = true;
+  
+  // Append to desktop before other elements
+  const desktop = document.getElementById('desktop');
+  if (desktop && desktop.firstChild) {
+    desktop.insertBefore(videoElement, desktop.firstChild);
+  } else if (desktop) {
+    desktop.appendChild(videoElement);
+  } else {
+    document.body.appendChild(videoElement);
+  }
+  
+  // Start playing
+  videoElement.play().catch(error => {
+    console.error("Error playing video background:", error);
+  });
+}
+
+// Initialize video background
+document.addEventListener('DOMContentLoaded', setupVideoBackground);
+
 // Import icons
 const photosIcon = '/icons/Film-Cannister-from-Photoroom.png';
 const moviesIcon = '/icons/Photoroom-VHS.png';
@@ -115,3 +162,6 @@ document.addEventListener('mousedown', () => {
 });
 
 // Future JavaScript for LeopardWeb will go here.
+
+// Initialize video background if not already done
+setupVideoBackground();
