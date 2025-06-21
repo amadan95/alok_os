@@ -268,4 +268,30 @@
     height: 6px;
     background: #6cc64f;
     border-radius: 1px;
+}
+
+.music-list li {
+  padding: 8px;
+  border-bottom: 1px solid #ccc;
+  transition: background-color 0.2s;
+}
+
+.music-list li.active {
+  background-color: #0078d7;
+  color: white;
+}
+
+.song-title {
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.song-artist {
+  font-size: 0.8em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.8;
 } 

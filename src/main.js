@@ -12,77 +12,69 @@ import iPod from './apps/iPod';
 
 // Set up video background
 function setupVideoBackground() {
-  const videoPath = '/Gifakira Video 100.308.mp4';
-  
-  // Remove any existing video backgrounds
+  // Remove any existing video elements
   const existingVideos = document.querySelectorAll('#video-background');
   existingVideos.forEach(video => video.remove());
   
-  // Remove any background images that might be set
-  document.body.style.backgroundImage = 'none';
-  document.body.style.backgroundColor = 'black';
-  
-  console.log("Attempting to set up video background with path:", videoPath);
-  
-  // Try to create video element directly without checking
-  createVideoElement(videoPath);
-  
-  // Also try to preload the video
-  const preloadLink = document.createElement('link');
-  preloadLink.rel = 'preload';
-  preloadLink.as = 'video';
-  preloadLink.href = videoPath;
-  document.head.appendChild(preloadLink);
-}
-
-function createVideoElement(videoPath) {
-  console.log("Creating video element with source:", videoPath);
-  
+  // Create a new video element
   const videoElement = document.createElement('video');
   videoElement.id = 'video-background';
-  videoElement.crossOrigin = 'anonymous';
   videoElement.autoplay = true;
   videoElement.loop = true;
   videoElement.muted = true;
   videoElement.playsInline = true;
   videoElement.controls = false;
-  videoElement.preload = 'auto';
   
-  // Add event listeners for debugging
+  // Set CSS properties directly
+  videoElement.style.position = 'fixed';
+  videoElement.style.top = '0';
+  videoElement.style.left = '0';
+  videoElement.style.width = '100%';
+  videoElement.style.height = '100%';
+  videoElement.style.objectFit = 'cover';
+  videoElement.style.zIndex = '0';
+  
+  // Create source element
+  const source = document.createElement('source');
+  source.src = '/Gifakira Video 100.308.mp4';
+  source.type = 'video/mp4';
+  
+  // Add event listeners
   videoElement.addEventListener('loadeddata', () => {
-    console.log("Video data loaded successfully");
+    console.log('Video loaded successfully');
   });
   
   videoElement.addEventListener('playing', () => {
-    console.log("Video is now playing");
+    console.log('Video is playing');
   });
   
   videoElement.addEventListener('error', (e) => {
-    console.error("Video error:", e);
+    console.error('Video error:', e);
     document.body.style.backgroundColor = 'black';
   });
   
-  // Set source after adding event listeners
-  videoElement.src = videoPath;
+  // Append source to video
+  videoElement.appendChild(source);
   
-  // Append to body instead of desktop to ensure it's behind everything
-  document.body.prepend(videoElement);
+  // Insert video as the first element in the body
+  document.body.insertBefore(videoElement, document.body.firstChild);
   
-  // Start playing with a slight delay to ensure DOM is ready
-  setTimeout(() => {
-    videoElement.play().then(() => {
-      console.log("Video playback started successfully");
-    }).catch(error => {
-      console.error("Error playing video background:", error);
-      
-      // Try again with user interaction
-      document.addEventListener('click', () => {
-        videoElement.play().catch(e => console.error("Still can't play video after user interaction:", e));
-      }, { once: true });
-      
-      document.body.style.backgroundColor = 'black';
-    });
-  }, 500);
+  // Try to play the video
+  const playVideo = () => {
+    videoElement.play()
+      .then(() => console.log('Video playback started'))
+      .catch(err => {
+        console.error('Error playing video:', err);
+        // Try again on user interaction
+        document.addEventListener('click', () => {
+          videoElement.play().catch(e => console.error('Still cannot play video:', e));
+        }, { once: true });
+      });
+  };
+  
+  // Try to play immediately and after a delay
+  playVideo();
+  setTimeout(playVideo, 500);
 }
 
 // Initialize video background

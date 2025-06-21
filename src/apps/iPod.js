@@ -34,9 +34,10 @@ class iPod {
     });
     this.shufflePlaylist();
     this.currentIndex = 0;
-    this.currentView = 'nowPlaying'; // Can be 'menu' or 'nowPlaying'
+    this.currentView = 'nowPlaying'; // Can be 'menu', 'nowPlaying', or 'musicList'
     this.menuItems = ['Now Playing', 'Music', 'Settings'];
     this.activeMenuItem = 0;
+    this.musicListIndex = 0; // Current selection in music list
     this.isPlaying = false;
     this.isDragging = false;
     this.lastAngle = 0;
@@ -82,6 +83,8 @@ class iPod {
   renderScreenContent() {
     if (this.currentView === 'menu') {
       return this.renderMenu();
+    } else if (this.currentView === 'musicList') {
+      return this.renderMusicList();
     }
     return this.renderNowPlaying();
   }
@@ -92,6 +95,25 @@ class iPod {
       <ul class="ipod-menu">
         ${this.menuItems.map((item, index) => `
           <li class="${index === this.activeMenuItem ? 'active' : ''}">${item}</li>
+        `).join('')}
+      </ul>
+    `;
+  }
+
+  renderMusicList() {
+    // Sort songs alphabetically by title for the music list
+    const sortedPlaylist = [...this.playlist].sort((a, b) => 
+      a.title.localeCompare(b.title)
+    );
+    
+    return `
+      <div class="screen-header"><span class="now-playing-title">Music</span></div>
+      <ul class="ipod-menu music-list">
+        ${sortedPlaylist.map((song, index) => `
+          <li class="${index === this.musicListIndex ? 'active' : ''}">
+            <div class="song-title">${song.title}</div>
+            <div class="song-artist">${song.artist}</div>
+          </li>
         `).join('')}
       </ul>
     `;
@@ -148,8 +170,20 @@ class iPod {
         btn.addEventListener('mouseleave', removePressed);
     });
 
+    // Audio event listeners
     this.audio.addEventListener('timeupdate', () => this.updateProgress());
     this.audio.addEventListener('ended', () => this.nextTrack());
+    
+    // Add listeners to keep play/pause state in sync with audio
+    this.audio.addEventListener('play', () => {
+      this.isPlaying = true;
+      this.updateUI();
+    });
+    
+    this.audio.addEventListener('pause', () => {
+      this.isPlaying = false;
+      this.updateUI();
+    });
 
     const wheel = this.win.querySelector('.ipod-wheel');
     if (wheel) {
@@ -181,30 +215,68 @@ class iPod {
       if (selectedItem === 'Now Playing') {
         this.currentView = 'nowPlaying';
         this.updateUI();
+      } else if (selectedItem === 'Music') {
+        this.currentView = 'musicList';
+        this.musicListIndex = 0;
+        this.updateUI();
       }
       // Add other menu actions here
+    } else if (this.currentView === 'musicList') {
+      // Get the sorted playlist (same as in renderMusicList)
+      const sortedPlaylist = [...this.playlist].sort((a, b) => 
+        a.title.localeCompare(b.title)
+      );
+      
+      // Find the selected song in the original playlist
+      const selectedSong = sortedPlaylist[this.musicListIndex];
+      const originalIndex = this.playlist.findIndex(song => 
+        song.title === selectedSong.title && song.artist === selectedSong.artist
+      );
+      
+      if (originalIndex !== -1) {
+        this.currentIndex = originalIndex;
+        this.playTrack(this.currentIndex);
+        this.currentView = 'nowPlaying';
+        this.updateUI();
+      }
     } else {
       this.togglePlayPause();
     }
   }
 
   handleMenuClick() {
+    this.playClickSound();
+    if (this.currentView === 'nowPlaying') {
       this.currentView = 'menu';
       this.updateUI();
+    } else if (this.currentView === 'musicList') {
+      this.currentView = 'menu';
+      this.updateUI();
+    }
+    // If already in menu, do nothing
   }
 
   togglePlayPause() {
     if (this.playlist.length === 0) return;
+    
+    console.log("Toggle Play/Pause called, current state:", this.isPlaying);
+    
     if (this.isPlaying) {
       this.audio.pause();
+      this.isPlaying = false;
     } else {
       if (this.audio.src === '') {
         this.playTrack(this.currentIndex);
+      } else {
+        // If we already have a source, just play it
+        this.audio.play().catch(e => console.error("Audio play failed:", e));
+        this.isPlaying = true;
       }
-      this.audio.play();
     }
-    this.isPlaying = !this.isPlaying;
+    
+    // Update the UI to reflect the new state
     this.updateUI();
+    console.log("After toggle, playing state:", this.isPlaying);
   }
 
   playTrack(index) {
@@ -213,9 +285,20 @@ class iPod {
     const song = this.playlist[index];
     if (song) {
       if (song.src) {
+        // Store the current playing state
+        const wasPlaying = this.isPlaying;
+        
+        // Update the audio source
         this.audio.src = song.src;
-        this.audio.play().catch(e => console.error("Audio play failed:", e));
-        this.isPlaying = true;
+        
+        // Play the audio if it was playing before or if we're explicitly starting playback
+        if (wasPlaying) {
+          this.audio.play().catch(e => {
+            console.error("Audio play failed:", e);
+            this.isPlaying = false;
+            this.updateUI();
+          });
+        }
       } else {
         console.log(`No audio URL for: ${song.title} by ${song.artist}`);
         this.isPlaying = false;
@@ -269,8 +352,11 @@ class iPod {
     // Only do a full re-render if the view has changed
     const nowPlayingView = this.win.querySelector('.now-playing-view');
     const menuView = this.win.querySelector('.ipod-menu');
+    const musicListView = this.win.querySelector('.music-list');
 
-    if ((this.currentView === 'nowPlaying' && !nowPlayingView) || (this.currentView === 'menu' && !menuView)) {
+    if ((this.currentView === 'nowPlaying' && !nowPlayingView) || 
+        (this.currentView === 'menu' && !menuView) ||
+        (this.currentView === 'musicList' && !musicListView)) {
       screenDisplay.innerHTML = this.renderScreenContent();
     }
 
@@ -287,8 +373,12 @@ class iPod {
       if (albumEl) albumEl.textContent = song.album;
       if (pauseIcon) pauseIcon.textContent = this.isPlaying ? '||' : '▶';
     } else if (this.currentView === 'menu') {
-       this.win.querySelectorAll('.ipod-menu li').forEach((item, index) => {
+      this.win.querySelectorAll('.ipod-menu li').forEach((item, index) => {
         item.classList.toggle('active', index === this.activeMenuItem);
+      });
+    } else if (this.currentView === 'musicList') {
+      this.win.querySelectorAll('.music-list li').forEach((item, index) => {
+        item.classList.toggle('active', index === this.musicListIndex);
       });
     }
   }
@@ -329,6 +419,11 @@ class iPod {
       
       if (this.currentView === 'menu') {
           this.activeMenuItem = (this.activeMenuItem + direction + this.menuItems.length) % this.menuItems.length;
+          this.updateUI();
+      } else if (this.currentView === 'musicList') {
+          // Get the sorted playlist length
+          const sortedPlaylistLength = this.playlist.length;
+          this.musicListIndex = (this.musicListIndex + direction + sortedPlaylistLength) % sortedPlaylistLength;
           this.updateUI();
       } else {
           // In Now Playing, scroll tracks

@@ -20,18 +20,21 @@ body, html {
   height: 100%;
   position: relative;
   background: none; /* Remove any background */
+  z-index: 1; /* Ensure desktop is above video but below other elements */
 }
 
 /* Video background */
 #video-background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: -1;
-  background: black;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  z-index: 0 !important; /* Below everything else */
+  opacity: 1 !important;
+  display: block !important;
+  pointer-events: none !important; /* Prevent interaction with the video */
 }
 
 /* Hide any default background images */
@@ -96,6 +99,7 @@ body::after,
   display: flex;
   flex-direction: column;
   transition: box-shadow 0.2s ease-in-out;
+  z-index: 100; /* Ensure windows are above the desktop */
 }
 
 .window.active {
