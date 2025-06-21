@@ -54,7 +54,22 @@ export default async function handler(request) {
   const headers = new Headers(upstreamResponse.headers);
   headers.delete('X-Frame-Options');
   headers.delete('Content-Security-Policy');
-  headers.delete('Permissions-Policy');
+  
+  // Handle Permissions-Policy header - remove problematic directives instead of deleting the entire header
+  if (headers.has('Permissions-Policy')) {
+    const permissionsPolicy = headers.get('Permissions-Policy');
+    // Remove browsing-topics directive that's causing issues
+    const filteredPolicy = permissionsPolicy
+      .split(',')
+      .filter(directive => !directive.trim().startsWith('browsing-topics='))
+      .join(',');
+    
+    if (filteredPolicy) {
+      headers.set('Permissions-Policy', filteredPolicy);
+    } else {
+      headers.delete('Permissions-Policy');
+    }
+  }
 
   // For non-HTML we can stream through untouched
   const contentType = headers.get('content-type') || '';
