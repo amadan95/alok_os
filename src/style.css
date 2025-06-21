@@ -508,13 +508,24 @@ body, html {
         transform-origin: top center;
     }
     
+    .window-header {
+        padding: 4px 6px;
+    }
+    
     .window-controls {
         left: 5px;
+        gap: 4px;
     }
     
     .window-control {
-        width: 14px;
-        height: 14px;
+        width: 10px;
+        height: 10px;
+        min-height: unset;
+        min-width: unset;
+    }
+    
+    .window-control .symbol {
+        font-size: 8px;
     }
     
     .window-title {
@@ -543,9 +554,15 @@ body, html {
     }
     
     /* Ensure touch targets are at least 44px for accessibility */
-    .window-control, .dock-item, .menu-item, .calculator .key {
+    .dock-item, .menu-item, .calculator .key {
         min-height: 44px;
         min-width: 44px;
+    }
+    
+    /* Override min-height/width for window controls */
+    .window-control {
+        min-height: unset;
+        min-width: unset;
     }
 }
 
@@ -581,6 +598,26 @@ body, html {
         height: 60% !important; /* Reduced from default */
         transform: scale(0.9); /* Scale down further on small devices */
         top: 40px !important;
+    }
+    
+    /* Smaller window controls for very small screens */
+    .window-header {
+        padding: 3px 4px;
+    }
+    
+    .window-controls {
+        left: 4px;
+        gap: 3px;
+    }
+    
+    .window-control {
+        width: 8px;
+        height: 8px;
+        border-width: 0.5px;
+    }
+    
+    .window-control .symbol {
+        font-size: 6px;
     }
     
     /* Adjust app-specific elements for very small screens */
