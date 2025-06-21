@@ -4,6 +4,7 @@
   "outputDirectory": "dist",
   "routes": [
     { "handle": "filesystem" },
+    { "src": "/Gifakira Video 100.308.mp4", "dest": "/Gifakira Video 100.308.mp4" },
     { "src": "/api/(.*)", "dest": "/api/$1" },
     { "src": "/(.*)", "dest": "/index.html" }
   ],
