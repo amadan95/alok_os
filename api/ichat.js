@@ -17,6 +17,33 @@ function sanitizeMessagesForLogs(messages) {
   });
 }
 
+// Helper function to detect and process URLs in messages
+function processUrls(content) {
+  // Simple URL regex pattern
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
+  
+  // Check if content contains URLs
+  const urls = content.match(urlRegex);
+  if (!urls) return content;
+  
+  // Add instructions for handling the URLs
+  let processedContent = content;
+  
+  urls.forEach(url => {
+    // Check if URL is an image
+    const isImage = imageExtensions.some(ext => url.toLowerCase().endsWith(ext));
+    
+    if (isImage) {
+      processedContent += `\n\n(Note: This message contains an image URL: ${url}. Please acknowledge the image in your response.)`;
+    } else {
+      processedContent += `\n\n(Note: This message contains a link: ${url}. Please acknowledge the link in your response.)`;
+    }
+  });
+  
+  return processedContent;
+}
+
 export default async function handler(req) {
   // Set CORS headers
   const headers = {
@@ -72,8 +99,19 @@ export default async function handler(req) {
       });
     }
     
+    // Process messages to handle multimedia content
+    const processedMessages = messages.map(msg => {
+      if (msg.role === 'user') {
+        return {
+          ...msg,
+          content: processUrls(msg.content)
+        };
+      }
+      return msg;
+    });
+    
     // Log sanitized messages (without system prompt content)
-    console.log('[API] Messages received:', sanitizeMessagesForLogs(messages));
+    console.log('[API] Messages received:', sanitizeMessagesForLogs(processedMessages));
     
     try {
       // Dynamically import the Hugging Face client
@@ -91,7 +129,7 @@ export default async function handler(req) {
         // Make the API call with a timeout
         const responsePromise = client.chatCompletion({
           model: "meta-llama/Llama-3.1-8B-Instruct",
-          messages: messages,
+          messages: processedMessages,
           temperature: 0.85,  // Higher temperature for more sarcastic, creative responses
           max_tokens: 200    // Allow for slightly longer responses to fit in sarcasm
         });

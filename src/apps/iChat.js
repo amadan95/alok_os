@@ -48,6 +48,12 @@ Knowledge about apps in this retro Mac OS X Tiger environment:
 - iPod: The dedicated music player that makes you feel like it's 2007 and you're wearing skinny jeans. Scroll through albums with that classic click wheel interface and pretend streaming never happened.
 - PaintBrush: MS Paint's long-lost Apple cousin. Draw terrible art with limited tools and questionable precision. Perfect for creating masterpieces that only a mother could love.
 
+You can now support multimedia content in your responses:
+- Emojis: Feel free to use emojis naturally in your responses
+- Images: If the user sends an image URL, acknowledge it and comment on it
+- Links: When the user sends links, create a nice preview with title and brief description if possible
+- GIFs: Acknowledge and respond to GIFs the user might share
+
 Keep responses concise (max 80 words) and make sure to sound like a real person with actual opinions, not a corporate help desk. One emoji max per message, used strategically.`
       }
     ];
@@ -65,6 +71,10 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
     this.messageSound.addEventListener('error', (e) => {
       console.error('Audio loading error:', e);
     });
+
+    // URL regex pattern for detecting links
+    this.urlRegex = /(https?:\/\/[^\s]+)/g;
+    this.imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
   }
 
   // Helper function to sanitize messages for logging
@@ -114,6 +124,29 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
     }
   }
 
+  // Check if a URL is an image
+  isImageUrl(url) {
+    return this.imageExtensions.some(ext => url.toLowerCase().endsWith(ext));
+  }
+
+  // Process text to detect and format URLs, images, etc.
+  processMessageContent(text) {
+    // Replace URLs with formatted links or embedded content
+    return text.replace(this.urlRegex, (url) => {
+      if (this.isImageUrl(url)) {
+        return `<div class="image-container"><img src="${url}" alt="Shared image" class="chat-image" /></div>`;
+      } else {
+        return `<div class="link-preview">
+                  <a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>
+                  <div class="link-preview-content">
+                    <div class="link-preview-title">Link Preview</div>
+                    <div class="link-preview-description">${url}</div>
+                  </div>
+                </div>`;
+      }
+    });
+  }
+
   launch() {
     this.win = WindowManager.createWindow({
       title: 'iChat – AlokGPT',
@@ -138,7 +171,13 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
     const appendMessage = (role, text) => {
       const bubble = document.createElement('div');
       bubble.className = `chat-bubble ${role}`;
-      bubble.textContent = text;
+      
+      // Process the message content to handle multimedia
+      const processedContent = this.processMessageContent(text);
+      
+      // Use innerHTML to render HTML content (images, links)
+      bubble.innerHTML = processedContent;
+      
       thread.appendChild(bubble);
       thread.scrollTop = thread.scrollHeight;
       
@@ -262,7 +301,8 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
         }
         
         if (data && data.content) {
-          placeholder.textContent = data.content;
+          // Update the placeholder with the processed content
+          placeholder.innerHTML = this.processMessageContent(data.content);
           this.messages.push({ role: 'assistant', content: data.content });
           // Play message sound for API response
           this.playMessageSound();
@@ -290,12 +330,83 @@ Keep responses concise (max 80 words) and make sure to sound like a real person 
       thread.scrollTop = thread.scrollHeight;
     };
 
+    // Add support for drag and drop image uploads
+    thread.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      thread.classList.add('drag-over');
+    });
+
+    thread.addEventListener('dragleave', () => {
+      thread.classList.remove('drag-over');
+    });
+
+    thread.addEventListener('drop', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      thread.classList.remove('drag-over');
+      
+      const files = e.dataTransfer.files;
+      if (files.length > 0 && files[0].type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const imgUrl = event.target.result;
+          input.value += `${imgUrl}`;
+        };
+        reader.readAsDataURL(files[0]);
+      }
+    });
+
     sendBtn.addEventListener('click', callApi);
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         callApi();
       }
+    });
+
+    // Add emoji picker button
+    const emojiBtn = document.createElement('button');
+    emojiBtn.className = 'emoji-btn';
+    emojiBtn.textContent = '😀';
+    emojiBtn.title = 'Insert emoji';
+    this.win.querySelector('.chat-input-bar').insertBefore(emojiBtn, sendBtn);
+
+    // Simple emoji picker (just a few common emojis for demo)
+    emojiBtn.addEventListener('click', () => {
+      const emojis = ['😀', '😂', '❤️', '👍', '🔥', '🎉', '🤔', '😎', '🙌', '🤦‍♂️'];
+      const picker = document.createElement('div');
+      picker.className = 'emoji-picker';
+      
+      emojis.forEach(emoji => {
+        const emojiEl = document.createElement('span');
+        emojiEl.textContent = emoji;
+        emojiEl.addEventListener('click', () => {
+          input.value += emoji;
+          picker.remove();
+        });
+        picker.appendChild(emojiEl);
+      });
+      
+      document.body.appendChild(picker);
+      
+      // Position the picker near the emoji button
+      const rect = emojiBtn.getBoundingClientRect();
+      picker.style.top = `${rect.bottom + 5}px`;
+      picker.style.left = `${rect.left}px`;
+      
+      // Close picker when clicking outside
+      const closePickerOnClick = (e) => {
+        if (!picker.contains(e.target) && e.target !== emojiBtn) {
+          picker.remove();
+          document.removeEventListener('click', closePickerOnClick);
+        }
+      };
+      
+      // Use setTimeout to avoid the current click event closing the picker immediately
+      setTimeout(() => {
+        document.addEventListener('click', closePickerOnClick);
+      }, 0);
     });
   }
 }
