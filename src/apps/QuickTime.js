@@ -9,7 +9,7 @@ class QuickTime {
     this.isPlaying = false;
     this.isPlayerReady = false;
     this.isRepeating = false;
-    this.isShuffling = false;
+    this.isShuffling = true;
   }
 
   _getDOM() {
@@ -129,7 +129,19 @@ class QuickTime {
   _onPlayerReady(event, win) {
     this.isPlayerReady = true;
     this.player.setVolume(50);
-    this.player.setShuffle(false);
+    
+    // Enable shuffle by default
+    this.player.setShuffle(true);
+    
+    // Update the shuffle button indicator light to show it's active
+    const shuffleButton = win.querySelector('#te-shuffle-btn');
+    if (shuffleButton && shuffleButton.nextElementSibling) {
+      const indicatorLight = shuffleButton.nextElementSibling.querySelector('.te-indicator-light');
+      if (indicatorLight) {
+        indicatorLight.classList.add('active');
+      }
+    }
+    
     event.target.playVideo();
     
     this._setupControls(win);
