@@ -500,10 +500,12 @@ body, html {
     /* Window Adjustments */
     .window {
         width: 95% !important;
-        height: 80% !important;
-        top: 50px !important;
+        height: 70% !important;
+        top: 45px !important;
         left: 2.5% !important;
         min-width: unset;
+        transform: scale(0.95);
+        transform-origin: top center;
     }
     
     .window-controls {
@@ -576,5 +578,18 @@ body, html {
     .window {
         width: 98% !important;
         left: 1% !important;
+        height: 60% !important; /* Reduced from default */
+        transform: scale(0.9); /* Scale down further on small devices */
+        top: 40px !important;
+    }
+    
+    /* Adjust app-specific elements for very small screens */
+    .ichat-app .chat-thread {
+        max-height: calc(100% - 50px);
+    }
+    
+    .calculator .key {
+        font-size: 16px;
+        height: 36px;
     }
 }
