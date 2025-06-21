@@ -76,6 +76,46 @@ async function createServer() {
     }
   });
   
+  // Add proxy API route
+  app.all('/api/proxy', async (req, res) => {
+    console.log('[DEBUG] Proxy API route hit');
+    try {
+      console.log('[DEBUG] Loading handler from ./api/proxy.js');
+      const handler = (await import('./api/proxy.js')).default;
+      console.log('[DEBUG] Handler loaded, calling with request');
+      
+      // Create a Request object from the Express request
+      const url = new URL(req.url, `http://${req.headers.host}`);
+      const proxyRequest = new Request(url, {
+        method: req.method,
+        headers: req.headers,
+        body: req.method !== 'GET' && req.method !== 'HEAD' ? JSON.stringify(req.body) : undefined
+      });
+      
+      const response = await handler(proxyRequest);
+      console.log('[DEBUG] Proxy handler response received');
+      
+      // Extract status and headers from the Response object
+      const status = response.status;
+      const headers = Object.fromEntries(response.headers.entries());
+      
+      // Get the response body
+      const body = await response.arrayBuffer();
+      
+      // Set headers
+      Object.entries(headers).forEach(([key, value]) => {
+        res.setHeader(key, value);
+      });
+      
+      // Send response
+      console.log(`[DEBUG] Sending proxy response with status ${status}`);
+      res.status(status).send(Buffer.from(body));
+    } catch (error) {
+      console.error('Error handling proxy API request:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+  
   // Create Vite server in middleware mode
   const vite = await createViteServer({
     server: { middlewareMode: true },
