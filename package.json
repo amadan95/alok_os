@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "engines": {
-    "node": "18.x"
+    "node": "20.x"
   },
   "scripts": {
     "dev": "node server.js",
@@ -21,7 +21,6 @@
     "vite": "^5.4.2"
   },
   "dependencies": {
-    "@huggingface/inference": "^4.0.6",
     "ai": "^2.2.37",
     "cheerio": "^1.1.0",
     "cors": "^2.8.5",
@@ -29,7 +28,10 @@
     "express": "^4.21.2",
     "follow-redirects": "^1.15.9",
     "http-proxy-middleware": "^3.0.5",
+    "node-fetch": "^2.7.0",
     "openai": "^4.104.0",
-    "undici": "^5.28.3"
+    "together": "^0.0.11",
+    "together-ai": "^0.16.0",
+    "undici": "5.28.3"
   }
 }

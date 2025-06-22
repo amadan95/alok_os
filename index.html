@@ -5,11 +5,18 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>LeopardWeb</title>
-    <!-- Preload video for faster loading -->
-    <link rel="preload" href="/Gifakira Video 100.308.mp4" as="fetch" crossorigin>
+    <!-- Preload background image for faster loading -->
+    <link rel="preload" href="/aurora-copy.jpg" as="image">
+    <style>
+      body {
+        background: black url('/aurora-copy.jpg') no-repeat center center fixed;
+        background-size: cover;
+      }
+    </style>
   </head>
   <body>
-    <!-- Video background will be inserted here by JavaScript -->
+    <!-- Background image will be inserted here by JavaScript -->
+    <img id="bg-image" src="/aurora-copy.jpg" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -10;" />
     <div id="desktop">
       <div id="menu-bar">
         <div class="menu-bar-left">

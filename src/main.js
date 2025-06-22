@@ -1,100 +1,140 @@
 import './style.css'
-import WindowManager from './WindowManager';
-import Dock from './Dock';
+import WindowManager from './WindowManager.js';
+import Dock from './Dock.js';
 import TextEdit from './apps/TextEdit';
 import Calculator from './apps/Calculator';
-import PaintBrush from './apps/PaintBrush';
+import Safari from './apps/Safari';
 import iPhoto from './apps/iPhoto';
 import iTunes from './apps/iTunes';
-import Safari from './apps/Safari';
 import QuickTime from './apps/QuickTime';
+import PaintBrush from './apps/PaintBrush';
+import iChat from './apps/iChat';
 import iPod from './apps/iPod';
 
-// Set up video background
-function setupVideoBackground() {
-  // Remove any existing video elements
-  const existingVideos = document.querySelectorAll('#video-background');
-  existingVideos.forEach(video => video.remove());
+// Function to set up the static image background
+function setupImageBackground() {
+  console.log('Setting up static background image');
   
-  // Create a new video element
-  const videoElement = document.createElement('video');
-  videoElement.id = 'video-background';
-  videoElement.autoplay = true;
-  videoElement.loop = true;
-  videoElement.muted = true;
-  videoElement.playsInline = true;
-  videoElement.controls = false;
+  // Remove any existing video background if present
+  const existingVideo = document.querySelector('#video-background');
+  if (existingVideo) {
+    existingVideo.pause();
+    existingVideo.remove();
+  }
   
-  // Set playback rate to slow down the video (0.5 = half speed)
-  videoElement.playbackRate = 0.5;
+  // Remove any existing background image element
+  const existingBg = document.querySelector('#background-image');
+  if (existingBg) {
+    existingBg.remove();
+  }
+
+  // Create a div for the background image
+  const backgroundDiv = document.createElement('div');
+  backgroundDiv.id = 'background-image';
   
-  // Set CSS properties directly
-  videoElement.style.position = 'fixed';
-  videoElement.style.top = '0';
-  videoElement.style.left = '0';
-  videoElement.style.width = '100%';
-  videoElement.style.height = '100%';
-  videoElement.style.objectFit = 'cover';
-  videoElement.style.zIndex = '0';
+  // Set inline styles directly
+  document.body.style.backgroundImage = 'url("/aurora-copy.jpg")';
+  document.body.style.backgroundSize = 'cover';
+  document.body.style.backgroundPosition = 'center';
+  document.body.style.backgroundRepeat = 'no-repeat';
   
-  // Create source element
-  const source = document.createElement('source');
-  source.src = '/Gifakira Video 100.308.mp4';
-  source.type = 'video/mp4';
+  // Also set the div background as a fallback
+  backgroundDiv.style.position = 'fixed';
+  backgroundDiv.style.top = '0';
+  backgroundDiv.style.left = '0';
+  backgroundDiv.style.width = '100vw';
+  backgroundDiv.style.height = '100vh';
+  backgroundDiv.style.zIndex = '-10';
+  backgroundDiv.style.backgroundImage = 'url("/aurora-copy.jpg")';
+  backgroundDiv.style.backgroundSize = 'cover';
+  backgroundDiv.style.backgroundPosition = 'center';
+  backgroundDiv.style.backgroundRepeat = 'no-repeat';
   
-  // Add event listeners
-  videoElement.addEventListener('loadeddata', () => {
-    console.log('Video loaded successfully');
-    // Set playback rate again after loading to ensure it takes effect
-    videoElement.playbackRate = 0.5;
-  });
-  
-  videoElement.addEventListener('playing', () => {
-    console.log('Video is playing at speed:', videoElement.playbackRate);
-    // Ensure playback rate is maintained
-    videoElement.playbackRate = 0.5;
-  });
-  
-  videoElement.addEventListener('error', (e) => {
-    console.error('Video error:', e);
-    document.body.style.backgroundColor = 'black';
-  });
-  
-  // Append source to video
-  videoElement.appendChild(source);
-  
-  // Insert video as the first element in the body
-  document.body.insertBefore(videoElement, document.body.firstChild);
-  
-  // Try to play the video
-  const playVideo = () => {
-    videoElement.play()
-      .then(() => {
-        console.log('Video playback started');
-        // Set playback rate again after playback starts
-        videoElement.playbackRate = 0.5;
-      })
-      .catch(err => {
-        console.error('Error playing video:', err);
-        // Try again with user interaction
-        document.addEventListener('click', () => {
-          videoElement.play()
-            .then(() => {
-              // Set playback rate after user interaction play
-              videoElement.playbackRate = 0.5;
-            })
-            .catch(e => console.error('Still cannot play video:', e));
-        }, { once: true });
-      });
-  };
-  
-  // Try to play immediately and after a delay
-  playVideo();
-  setTimeout(playVideo, 500);
+  // Add the background div to the body as the first element
+  document.body.insertBefore(backgroundDiv, document.body.firstChild);
+  console.log('Static background image set up successfully');
 }
 
-// Initialize video background
-document.addEventListener('DOMContentLoaded', setupVideoBackground);
+// Legacy video background setup function - keeping for reference but not using
+function setupVideoBackground() {
+  try {
+    const video = document.createElement('video');
+    video.id = 'background-video';
+    video.autoplay = true;
+    video.loop = true;
+    video.muted = true;
+    video.playsInline = true;
+    video.style.position = 'fixed';
+    video.style.top = '0';
+    video.style.left = '0';
+    video.style.width = '100%';
+    video.style.height = '100%';
+    video.style.objectFit = 'cover';
+    video.style.zIndex = '-1';
+    
+    // Add a source element
+    const source = document.createElement('source');
+    source.src = '/Gifakira Video 100.308.mp4';
+    source.type = 'video/mp4';
+    video.appendChild(source);
+    
+    // Add the video to the body
+    document.body.appendChild(video);
+    
+    // Set playback rate
+    video.playbackRate = 0.5;
+    
+    // Log when the video is loaded
+    video.addEventListener('loadeddata', () => {
+      console.log('Video loaded successfully');
+      console.log('Video is playing at speed:', video.playbackRate);
+    });
+    
+    // Play the video
+    const playVideo = async () => {
+      try {
+        await video.play();
+        console.log('Video playback started');
+      } catch (error) {
+        console.error('Error playing video:', error);
+      }
+    };
+    
+    playVideo();
+    
+    // Add event listener for when the video ends
+    video.addEventListener('ended', () => {
+      console.log('Video playback ended, looping...');
+      playVideo();
+    });
+    
+  } catch (error) {
+    console.error('Error setting up video background:', error);
+  }
+}
+
+// Add preload link for better performance
+const preloadLink = document.createElement('link');
+preloadLink.rel = 'preload';
+preloadLink.as = 'image';
+preloadLink.href = '/aurora-copy.jpg';
+document.head.appendChild(preloadLink);
+
+// Set up the static image background immediately and after DOM is fully loaded
+setupImageBackground();
+
+// Initialize the desktop
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM fully loaded and parsed');
+  setupImageBackground(); // Set up background again after DOM is loaded to ensure it's applied
+  
+  // Make sure no video is playing
+  const videoElements = document.querySelectorAll('video');
+  videoElements.forEach(video => {
+    video.pause();
+    video.remove();
+  });
+});
 
 // Import icons
 const photosIcon = '/icons/Film-Cannister-from-Photoroom.png';

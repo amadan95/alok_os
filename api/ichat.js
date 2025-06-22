@@ -63,8 +63,11 @@ export default async function handler(req) {
   }
   
   try {
+    console.log('[API] ichat handler called');
+    
     // Check if we have a POST request
     if (req.method !== 'POST') {
+      console.log('[API] Not a POST request, returning default error');
       return new Response(JSON.stringify({
         content: DEFAULT_ERROR_MESSAGE
       }), {
@@ -73,10 +76,13 @@ export default async function handler(req) {
       });
     }
     
-    // Get the API key
-    const apiKey = process.env.HF_API_KEY;
+    // Get the API key from environment variables
+    const apiKey = process.env.TOGETHER_API_KEY;
+    console.log('[API] Together API Key available:', !!apiKey, apiKey ? `(starts with: ${apiKey.substring(0, 5)}...)` : '(missing)');
+    
     if (!apiKey) {
       // If no API key, return the default error message
+      console.error('[API] No Together API key found in environment variables');
       return new Response(JSON.stringify({
         content: DEFAULT_ERROR_MESSAGE
       }), {
@@ -86,10 +92,13 @@ export default async function handler(req) {
     }
     
     // Parse the request body
+    console.log('[API] Parsing request body');
     const body = await req.json();
     const messages = body.messages;
+    console.log('[API] Got messages from req.body');
     
     if (!messages || !Array.isArray(messages)) {
+      console.error('[API] Invalid messages format');
       // If invalid messages, return the default error message
       return new Response(JSON.stringify({
         content: DEFAULT_ERROR_MESSAGE
@@ -111,59 +120,57 @@ export default async function handler(req) {
     });
     
     // Log sanitized messages (without system prompt content)
-    console.log('[API] Messages received:', sanitizeMessagesForLogs(processedMessages));
+    console.log('[API] Messages:', JSON.stringify(sanitizeMessagesForLogs(processedMessages)).substring(0, 100) + '...');
     
     try {
-      // Dynamically import the Hugging Face client
-      const { InferenceClient } = await import('@huggingface/inference');
+      console.log('[API] Sending request to Together AI for model: NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO');
       
-      // Initialize the client
-      const client = new InferenceClient(apiKey);
-      
-      // Set a timeout for the API call
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('API call timed out')), 8000);
+      const response = await fetch('https://api.together.xyz/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey.trim()}`
+        },
+        body: JSON.stringify({
+          model: 'NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO',
+          messages: processedMessages,
+          temperature: 0.85,
+          max_tokens: 200,
+          stream: false
+        })
       });
       
-      try {
-        // Make the API call with a timeout
-        console.log('[API] Sending request to HuggingFace for model: meta-llama/Llama-3.1-8B-Instruct');
-        const responsePromise = client.chatCompletion({
-          model: "meta-llama/Llama-3.1-8B-Instruct",
-          messages: processedMessages,
-          temperature: 0.85,  // Higher temperature for more sarcastic, creative responses
-          max_tokens: 200    // Allow for slightly longer responses to fit in sarcasm
-        });
-        
-        // Race between the API call and the timeout
-        const response = await Promise.race([responsePromise, timeoutPromise]);
-        
-        console.log('[API] HuggingFace response received:', JSON.stringify(response).substring(0, 200) + '...');
-        console.log('[API] Sending response content:', response.choices[0].message.content.substring(0, 100) + '...');
-        
-        // Return the response
-        return new Response(JSON.stringify({
-          content: response.choices[0].message.content
-        }), {
-          status: 200,
-          headers
-        });
-      } catch (error) {
-        // Log detailed error information
-        console.error('[API] Error calling Hugging Face:', error);
-        console.error('[API] Error details:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
-        
-        // If the API call fails, return the default error message
-        return new Response(JSON.stringify({
-          content: DEFAULT_ERROR_MESSAGE
-        }), {
-          status: 200,
-          headers
-        });
+      console.log('[API] Response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('[API] Together AI error response:', errorText);
+        throw new Error(`Together AI API returned ${response.status}: ${errorText}`);
       }
+      
+      const data = await response.json();
+      console.log('[API] Together AI response received');
+      
+      if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+        console.error('[API] Invalid response format');
+        throw new Error('Invalid response format from Together AI');
+      }
+      
+      const content = data.choices[0].message.content;
+      console.log('[API] Sending response content:', content.substring(0, 100) + '...');
+      
+      // Return the response
+      return new Response(JSON.stringify({
+        content: content
+      }), {
+        status: 200,
+        headers
+      });
     } catch (error) {
+      // Log detailed error information
+      console.error('[API] Error calling Together AI:', error.message);
+      
       // If the API call fails, return the default error message
-      console.error('[API] Error calling Hugging Face:', error);
       return new Response(JSON.stringify({
         content: DEFAULT_ERROR_MESSAGE
       }), {
@@ -173,7 +180,7 @@ export default async function handler(req) {
     }
   } catch (error) {
     // Even if there's an error, return a valid response with the default error message
-    console.error('[API] Unexpected error:', error);
+    console.error('[API] Unexpected error:', error.message);
     return new Response(JSON.stringify({
       content: DEFAULT_ERROR_MESSAGE
     }), { 

@@ -12,7 +12,22 @@ body, html {
   font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
   cursor: default;
   user-select: none;
-  background: black; /* Fallback background color */
+  background: black url('/aurora-copy.jpg') no-repeat center center fixed; /* Direct background on body */
+  background-size: cover;
+}
+
+#background-image {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background-image: url('/aurora-copy.jpg') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  z-index: -10 !important; /* Below everything else */
+  opacity: 1 !important;
 }
 
 #desktop {
@@ -23,18 +38,9 @@ body, html {
   z-index: 1; /* Ensure desktop is above video but below other elements */
 }
 
-/* Video background */
+/* Video background - keeping for reference but not using */
 #video-background {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-  z-index: 0 !important; /* Below everything else */
-  opacity: 1 !important;
-  display: block !important;
-  pointer-events: none !important; /* Prevent interaction with the video */
+  display: none !important; /* Hide any video background */
 }
 
 /* Hide any default background images */
