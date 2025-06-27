@@ -1,5 +1,6 @@
 import './iChat.css';
 import WindowManager from '../WindowManager';
+import { marked } from 'marked';
 
 class iChat {
   constructor() {
@@ -144,8 +145,11 @@ You can now support multimedia content in your responses:
 
   // Process text to detect and format URLs, images, etc.
   processMessageContent(text) {
-    // Replace URLs with formatted links or embedded content
-    return text.replace(this.urlRegex, (url) => {
+    // First parse the text as Markdown
+    let processedText = marked.parse(text);
+    
+    // Then handle any URLs that might not have been properly formatted in Markdown
+    processedText = processedText.replace(this.urlRegex, (url) => {
       if (this.isImageUrl(url)) {
         return `<div class="image-container"><img src="${url}" alt="Shared image" class="chat-image" /></div>`;
       } else {
@@ -158,6 +162,8 @@ You can now support multimedia content in your responses:
                 </div>`;
       }
     });
+    
+    return processedText;
   }
 
   launch() {

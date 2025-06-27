@@ -123,6 +123,9 @@ export default async function handler(req) {
     const systemMessageIndex = processedMessages.findIndex(msg => msg.role === 'system');
     if (systemMessageIndex >= 0) {
       processedMessages[systemMessageIndex].content += `\n\nIMPORTANT: Keep your responses concise and to the point. Aim for 2-3 short paragraphs maximum. Be brief but insightful.`;
+      
+      // Add Markdown formatting instruction
+      processedMessages[systemMessageIndex].content += `\n\nYou can use Markdown formatting in your responses. Feel free to use **bold**, *italic*, \`code\`, bullet points, numbered lists, headings, etc. to structure your responses.`;
     }
     
     // Log sanitized messages (without system prompt content)
