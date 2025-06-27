@@ -123,7 +123,7 @@ export default async function handler(req) {
     console.log('[API] Messages:', JSON.stringify(sanitizeMessagesForLogs(processedMessages)).substring(0, 100) + '...');
     
     try {
-      console.log('[API] Sending request to Together AI for model: NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO');
+      console.log('[API] Sending request to Together AI for model: deepseek-ai/DeepSeek-V3');
       
       const response = await fetch('https://api.together.xyz/v1/chat/completions', {
         method: 'POST',
@@ -132,7 +132,7 @@ export default async function handler(req) {
           'Authorization': `Bearer ${apiKey.trim()}`
         },
         body: JSON.stringify({
-          model: 'NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO',
+          model: 'deepseek-ai/DeepSeek-V3',
           messages: processedMessages,
           temperature: 0.85,
           max_tokens: 200,
