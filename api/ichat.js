@@ -126,6 +126,9 @@ export default async function handler(req) {
       
       // Add Markdown formatting instruction
       processedMessages[systemMessageIndex].content += `\n\nYou can use Markdown formatting in your responses. Feel free to use **bold**, *italic*, \`code\`, bullet points, numbered lists, headings, etc. to structure your responses.`;
+      
+      // Add instruction to complete thoughts
+      processedMessages[systemMessageIndex].content += `\n\nALWAYS complete your thoughts and sentences. Never end a response mid-thought or with an incomplete sentence. If you start a point, make sure to finish it. Avoid phrases like "Now, if" or "But if" at the end of your responses.`;
     }
     
     // Log sanitized messages (without system prompt content)
@@ -147,9 +150,10 @@ export default async function handler(req) {
         body: JSON.stringify({
           model: 'deepseek-ai/DeepSeek-V3',
           messages: processedMessages,
-          temperature: 0.85,
+          temperature: 0.7, // Slightly lower temperature for more coherent responses
           max_tokens: randomTokenLength,
-          stream: false
+          stream: false,
+          stop: ["Now, if", "But if", "However, if"] // Stop sequences to prevent incomplete thoughts
         })
       });
       
