@@ -125,6 +125,10 @@ export default async function handler(req) {
     try {
       console.log('[API] Sending request to Together AI for model: deepseek-ai/DeepSeek-V3');
       
+      // Generate a random token length between 100 and 500 for more natural responses
+      const randomTokenLength = Math.floor(Math.random() * 401) + 100; // Random between 100 and 500
+      console.log(`[API] Using random max_tokens: ${randomTokenLength}`);
+      
       const response = await fetch('https://api.together.xyz/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -135,7 +139,7 @@ export default async function handler(req) {
           model: 'deepseek-ai/DeepSeek-V3',
           messages: processedMessages,
           temperature: 0.85,
-          max_tokens: 200,
+          max_tokens: randomTokenLength,
           stream: false
         })
       });

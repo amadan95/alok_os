@@ -240,7 +240,7 @@ You can now support multimedia content in your responses:
           this.playMessageSound();
           placeholderUpdated = true;
         }
-      }, 10000); // Increased to 10 seconds to give API more time to respond
+      }, 20000); // Increased to 20 seconds to give API more time to respond
 
       try {
         console.log('Sending request to API server');
