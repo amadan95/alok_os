@@ -119,6 +119,12 @@ export default async function handler(req) {
       return msg;
     });
     
+    // Add a conciseness instruction to the system message if one exists
+    const systemMessageIndex = processedMessages.findIndex(msg => msg.role === 'system');
+    if (systemMessageIndex >= 0) {
+      processedMessages[systemMessageIndex].content += `\n\nIMPORTANT: Keep your responses concise and to the point. Aim for 2-3 short paragraphs maximum. Be brief but insightful.`;
+    }
+    
     // Log sanitized messages (without system prompt content)
     console.log('[API] Messages:', JSON.stringify(sanitizeMessagesForLogs(processedMessages)).substring(0, 100) + '...');
     
