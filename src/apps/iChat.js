@@ -182,7 +182,10 @@ You can now support multimedia content in your responses:
           <div class="chat-thread"></div>
           <div class="chat-input-bar">
             <textarea class="chat-input" rows="1" placeholder="Type a message…"></textarea>
-            <button class="chat-send-btn">Send</button>
+            <div class="chat-buttons">
+              <button class="emoji-btn">😀</button>
+              <button class="chat-send-btn">Send</button>
+            </div>
           </div>
         </div>
       `
@@ -191,6 +194,7 @@ You can now support multimedia content in your responses:
     const thread = this.win.querySelector('.chat-thread');
     const input = this.win.querySelector('.chat-input');
     const sendBtn = this.win.querySelector('.chat-send-btn');
+    const emojiBtn = this.win.querySelector('.emoji-btn');
 
     // Add auto-resize functionality to the input box
     const adjustInputHeight = () => {
@@ -415,13 +419,6 @@ You can now support multimedia content in your responses:
         callApi();
       }
     });
-
-    // Add emoji picker button
-    const emojiBtn = document.createElement('button');
-    emojiBtn.className = 'emoji-btn';
-    emojiBtn.textContent = '😀';
-    emojiBtn.title = 'Insert emoji';
-    this.win.querySelector('.chat-input-bar').insertBefore(emojiBtn, sendBtn);
 
     // Simple emoji picker (just a few common emojis for demo)
     emojiBtn.addEventListener('click', () => {
