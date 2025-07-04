@@ -221,9 +221,70 @@ body::after,
 
 .resize-handle {
     position: absolute;
-    width: 16px;
-    height: 16px;
     z-index: 10;
+}
+
+/* Corner handles */
+.resize-handle.top-left,
+.resize-handle.top-right,
+.resize-handle.bottom-left,
+.resize-handle.bottom-right {
+    width: 12px;
+    height: 12px;
+}
+
+/* Edge handles */
+.resize-handle.top,
+.resize-handle.bottom {
+    height: 6px;
+    left: 12px;
+    right: 12px;
+}
+
+.resize-handle.left,
+.resize-handle.right {
+    width: 6px;
+    top: 12px;
+    bottom: 12px;
+}
+
+/* Position specific styles */
+.resize-handle.top-left {
+    top: 0;
+    left: 0;
+    cursor: nwse-resize;
+}
+
+.resize-handle.top {
+    top: 0;
+    cursor: ns-resize;
+}
+
+.resize-handle.top-right {
+    top: 0;
+    right: 0;
+    cursor: nesw-resize;
+}
+
+.resize-handle.left {
+    left: 0;
+    cursor: ew-resize;
+}
+
+.resize-handle.right {
+    right: 0;
+    cursor: ew-resize;
+}
+
+.resize-handle.bottom-left {
+    bottom: 0;
+    left: 0;
+    cursor: nesw-resize;
+}
+
+.resize-handle.bottom {
+    bottom: 0;
+    cursor: ns-resize;
 }
 
 .resize-handle.bottom-right {
@@ -231,6 +292,15 @@ body::after,
     right: 0;
     cursor: nwse-resize;
     background-image: repeating-linear-gradient(135deg, rgba(0,0,0,0.2), rgba(0,0,0,0.2) 1px, transparent 1px, transparent 4px);
+}
+
+/* Show resize handles only on hover */
+.window:not(:hover) .resize-handle:not(.bottom-right) {
+    opacity: 0;
+}
+
+.window:hover .resize-handle {
+    opacity: 0.7;
 }
 
 /* Dock Icon Styles */

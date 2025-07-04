@@ -105,17 +105,25 @@ class WindowManager {
 
     win.appendChild(body);
 
-    const resizeHandle = document.createElement('div');
-    resizeHandle.className = 'resize-handle bottom-right';
+    // Create resize handles for all corners and edges
+    const resizePositions = [
+      'top-left', 'top', 'top-right',
+      'left', 'right',
+      'bottom-left', 'bottom', 'bottom-right'
+    ];
+    
+    resizePositions.forEach(position => {
+      const resizeHandle = document.createElement('div');
+      resizeHandle.className = `resize-handle ${position}`;
+      win.appendChild(resizeHandle);
+      this._makeResizable(win, resizeHandle, position);
+    });
 
-    win.appendChild(resizeHandle);
     this.desktop.appendChild(win);
-
     this.windows.push(win);
     this.setActive(win);
 
     this._makeDraggable(win, header);
-    this._makeResizable(win, resizeHandle);
 
     win.addEventListener('mousedown', () => this.setActive(win));
 
@@ -200,14 +208,61 @@ class WindowManager {
     });
   }
 
-  _makeResizable(win, handle) {
-    let startX, startY, startWidth, startHeight;
+  _makeResizable(win, handle, position) {
+    let startX, startY, startWidth, startHeight, startLeft, startTop;
 
     const onMouseMove = (e) => {
-      const newWidth = startWidth + (e.clientX - startX);
-      const newHeight = startHeight + (e.clientY - startY);
+      // Calculate position changes
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      
+      // Minimum window dimensions
+      const minWidth = 200;
+      const minHeight = 150;
+      
+      // Toolbar height constraint
+      const toolbarHeight = 22;
+      
+      // New dimensions and positions
+      let newWidth = startWidth;
+      let newHeight = startHeight;
+      let newLeft = startLeft;
+      let newTop = startTop;
+      
+      // Handle resize based on position
+      if (position.includes('right')) {
+        newWidth = Math.max(minWidth, startWidth + dx);
+      }
+      
+      if (position.includes('bottom')) {
+        newHeight = Math.max(minHeight, startHeight + dy);
+      }
+      
+      if (position.includes('left')) {
+        const possibleWidth = startWidth - dx;
+        if (possibleWidth >= minWidth) {
+          newWidth = possibleWidth;
+          newLeft = startLeft + dx;
+        }
+      }
+      
+      if (position.includes('top')) {
+        const possibleHeight = startHeight - dy;
+        if (possibleHeight >= minHeight) {
+          // Ensure we don't go above the toolbar
+          const newPossibleTop = startTop + dy;
+          if (newPossibleTop >= toolbarHeight) {
+            newHeight = possibleHeight;
+            newTop = newPossibleTop;
+          }
+        }
+      }
+      
+      // Apply new dimensions and positions
       win.style.width = `${newWidth}px`;
       win.style.height = `${newHeight}px`;
+      win.style.left = `${newLeft}px`;
+      win.style.top = `${newTop}px`;
     };
 
     const onMouseUp = () => {
@@ -221,6 +276,8 @@ class WindowManager {
       startY = e.clientY;
       startWidth = win.offsetWidth;
       startHeight = win.offsetHeight;
+      startLeft = win.offsetLeft;
+      startTop = win.offsetTop;
       document.addEventListener('mousemove', onMouseMove);
       document.addEventListener('mouseup', onMouseUp);
     });
