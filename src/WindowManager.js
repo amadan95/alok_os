@@ -69,8 +69,27 @@ class WindowManager {
     }
     win.style.width = options.width || '400px';
     win.style.height = options.height || '300px';
-    win.style.left = options.x || '100px';
-    win.style.top = options.y || '100px';
+    
+    // Calculate initial position with constraints
+    const toolbarHeight = 22; // Standard macOS toolbar height
+    let initialLeft = options.x ? parseInt(options.x) : 100;
+    let initialTop = options.y ? parseInt(options.y) : 100;
+    
+    // Ensure window doesn't start under toolbar
+    if (initialTop < toolbarHeight) {
+      initialTop = toolbarHeight;
+    }
+    
+    // Ensure window is within screen bounds
+    const maxLeft = window.innerWidth - 100;
+    const maxTop = window.innerHeight - 100;
+    
+    if (initialLeft > maxLeft) initialLeft = maxLeft;
+    if (initialLeft < 0) initialLeft = 0;
+    if (initialTop > maxTop) initialTop = maxTop;
+    
+    win.style.left = `${initialLeft}px`;
+    win.style.top = `${initialTop}px`;
     win.style.zIndex = this.zIndexCounter++;
 
     const header = this.createHeader(options.title, win, options.resizable);
@@ -146,8 +165,26 @@ class WindowManager {
     let offsetX, offsetY;
 
     const onMouseMove = (e) => {
-      win.style.left = `${e.clientX - offsetX}px`;
-      win.style.top = `${e.clientY - offsetY}px`;
+      // Calculate new position
+      let newLeft = e.clientX - offsetX;
+      let newTop = e.clientY - offsetY;
+      
+      // Prevent window from going above the toolbar (top < 22px)
+      const toolbarHeight = 22; // Standard macOS toolbar height
+      if (newTop < toolbarHeight) {
+        newTop = toolbarHeight;
+      }
+      
+      // Prevent window from going off screen
+      const maxLeft = window.innerWidth - 50; // Keep at least 50px visible
+      const maxTop = window.innerHeight - 50; // Keep at least 50px visible
+      
+      if (newLeft > maxLeft) newLeft = maxLeft;
+      if (newLeft < 0) newLeft = 0;
+      if (newTop > maxTop) newTop = maxTop;
+      
+      win.style.left = `${newLeft}px`;
+      win.style.top = `${newTop}px`;
     };
 
     const onMouseUp = () => {

@@ -56,7 +56,7 @@ class iChat {
 ## Response Length
 - **Be concise** - you have a 500 token limit
 - **Prioritize completion** - always finish your thoughts within the limit
-- **Get to the point** - no fluff, no unnecessary explanations
+
 
 Knowledge about apps in this retro Mac OS X Tiger environment:
 - iChat: That's me! Your sarcastic digital companion living in this retro messaging app. I'm here to chat, drop knowledge bombs, and occasionally roll my eyes at your questions.
@@ -192,6 +192,29 @@ You can now support multimedia content in your responses:
     const input = this.win.querySelector('.chat-input');
     const sendBtn = this.win.querySelector('.chat-send-btn');
 
+    // Add auto-resize functionality to the input box
+    const adjustInputHeight = () => {
+      // Reset height to auto to get the correct scrollHeight
+      input.style.height = 'auto';
+      
+      // Set new height based on content (with a max height)
+      const maxHeight = 120; // Maximum height in pixels
+      const newHeight = Math.min(input.scrollHeight, maxHeight);
+      input.style.height = `${newHeight}px`;
+      
+      // If content exceeds max height, enable scrolling
+      input.style.overflowY = input.scrollHeight > maxHeight ? 'auto' : 'hidden';
+    };
+    
+    // Initialize input height
+    adjustInputHeight();
+    
+    // Adjust height on input
+    input.addEventListener('input', adjustInputHeight);
+    
+    // Also adjust when window is resized
+    window.addEventListener('resize', adjustInputHeight);
+    
     const appendMessage = (role, text) => {
       const bubble = document.createElement('div');
       bubble.className = `chat-bubble ${role}`;
@@ -225,6 +248,10 @@ You can now support multimedia content in your responses:
       const userText = input.value.trim();
       if (!userText) return;
       input.value = '';
+      
+      // Reset input height after clearing
+      input.style.height = 'auto';
+      input.style.overflowY = 'hidden';
 
       this.messages.push({ role: 'user', content: userText });
       appendMessage('user', userText);

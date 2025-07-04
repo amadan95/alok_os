@@ -177,7 +177,7 @@
     padding: 6px;
     background: #d0d0d0;
     border-top: 1px solid #b0b0b0;
-    align-items: center;
+    align-items: flex-end;
 }
 
 .chat-input {
@@ -186,8 +186,13 @@
     border: 1px solid #999;
     border-radius: 6px;
     font-family: inherit;
-    padding: 6px;
-    overflow: hidden;
+    font-size: 14px;
+    line-height: 1.4;
+    padding: 8px;
+    min-height: 20px;
+    max-height: 120px;
+    overflow-y: hidden;
+    transition: height 0.1s ease-out;
 }
 
 .chat-send-btn, .emoji-btn {
