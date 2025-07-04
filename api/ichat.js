@@ -119,16 +119,17 @@ export default async function handler(req) {
       return msg;
     });
     
-    // Add a conciseness instruction to the system message if one exists
+    // Add instructions to the system message if one exists
     const systemMessageIndex = processedMessages.findIndex(msg => msg.role === 'system');
     if (systemMessageIndex >= 0) {
-      processedMessages[systemMessageIndex].content += `\n\nIMPORTANT: Keep your responses concise and to the point. Aim for 2-3 short paragraphs maximum. Be brief but insightful.`;
+      // Add conciseness instruction
+      processedMessages[systemMessageIndex].content += `\n\nIMPORTANT: Be concise but complete. You have a 500 token limit, so prioritize essential information. Get to the point quickly while ensuring you complete your thoughts.`;
       
       // Add Markdown formatting instruction
       processedMessages[systemMessageIndex].content += `\n\nYou can use Markdown formatting in your responses. Feel free to use **bold**, *italic*, \`code\`, bullet points, numbered lists, headings, etc. to structure your responses.`;
       
       // Add instruction to complete thoughts
-      processedMessages[systemMessageIndex].content += `\n\nALWAYS complete your thoughts and sentences. Never end a response mid-thought or with an incomplete sentence. If you start a point, make sure to finish it. Avoid phrases like "Now, if" or "But if" at the end of your responses.`;
+      processedMessages[systemMessageIndex].content += `\n\nALWAYS complete your thoughts and sentences. Never end a response mid-thought or with an incomplete sentence. If you start a point, make sure to finish it.`;
     }
     
     // Log sanitized messages (without system prompt content)
@@ -137,9 +138,8 @@ export default async function handler(req) {
     try {
       console.log('[API] Sending request to Together AI for model: deepseek-ai/DeepSeek-V3');
       
-      // Generate a random token length between 100 and 200 for more natural responses
-      const randomTokenLength = Math.floor(Math.random() * 101) + 100; // Random between 100 and 200
-      console.log(`[API] Using random max_tokens: ${randomTokenLength}`);
+      // Set token limit to 500 to ensure concise but complete responses
+      console.log(`[API] Using max_tokens: 500 for concise but complete responses`);
       
       const response = await fetch('https://api.together.xyz/v1/chat/completions', {
         method: 'POST',
@@ -151,9 +151,8 @@ export default async function handler(req) {
           model: 'deepseek-ai/DeepSeek-V3',
           messages: processedMessages,
           temperature: 0.7, // Slightly lower temperature for more coherent responses
-          max_tokens: randomTokenLength,
-          stream: false,
-          stop: ["Now, if", "But if", "However, if"] // Stop sequences to prevent incomplete thoughts
+          max_tokens: 500, // Token limit for concise but complete responses
+          stream: false
         })
       });
       
