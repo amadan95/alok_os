@@ -240,7 +240,7 @@ You can now support multimedia content in your responses:
 
     // Add a welcome message
     setTimeout(() => {
-      appendMessage('assistant', "Well look who wandered into iChat. Welcome to 2005, digital archaeologist. What's your take on this retro Mac vibe? Genuinely curious or just procrastinating on actual work? 🤔");
+      appendMessage('assistant', "Heyoo, sup!");
     }, 1000);
 
     // Default message when API fails

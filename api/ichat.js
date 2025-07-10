@@ -141,6 +141,10 @@ export default async function handler(req) {
       // Set token limit to 500 to ensure concise but complete responses
       console.log(`[API] Using max_tokens: 500 for concise but complete responses`);
       
+      // Add timeout to prevent function from hanging
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+      
       const response = await fetch('https://api.together.xyz/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -153,8 +157,11 @@ export default async function handler(req) {
           temperature: 0.7, // Slightly lower temperature for more coherent responses
           max_tokens: 500, // Token limit for concise but complete responses
           stream: false
-        })
+        }),
+        signal: controller.signal
       });
+      
+      clearTimeout(timeoutId);
       
       console.log('[API] Response status:', response.status);
       
@@ -185,6 +192,11 @@ export default async function handler(req) {
     } catch (error) {
       // Log detailed error information
       console.error('[API] Error calling Together AI:', error.message);
+      
+      // Handle specific timeout errors
+      if (error.name === 'AbortError') {
+        console.error('[API] Request timed out after 15 seconds');
+      }
       
       // If the API call fails, return the default error message
       return new Response(JSON.stringify({
