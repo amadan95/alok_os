@@ -18,7 +18,7 @@
   ],
   "functions": {
     "api/**/*.js": {
-      "runtime": "edge"
+      "runtime": "@vercel/edge@3.0.0"
     }
   }
 } 
